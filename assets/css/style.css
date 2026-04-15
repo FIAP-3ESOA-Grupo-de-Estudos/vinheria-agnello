@@ -618,4 +618,12 @@ body {
     line-height: normal;
     text-align: center;
   }
+
+  .catalog-section {
+    padding: 50px 0;
+  }
+
+  .catalog-section .list-items {
+    flex-wrap: wrap;
+  }
 }
