@@ -1,3 +1,12 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+  if (request.getAttribute("javax.servlet.include.request_uri") == null
+      && !Boolean.TRUE.equals(request.getAttribute("includedHeader"))) {
+    response.sendError(javax.servlet.http.HttpServletResponse.SC_FORBIDDEN);
+    return;
+  }
+%>
 <section class="hero">
 	<img
 		src="assets/images/hero-image.png"
