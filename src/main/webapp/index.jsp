@@ -1,18 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="UTF-8">
-		<title>Vinheria Agnelo</title>
-		<link rel="stylesheet" href="assets/css/style.css" />
-	</head>
-	<body>
-		<%@ include file="header.jsp" %>
+		<%
+			request.setAttribute("includedHeader", Boolean.TRUE);
+		%>
+		<%@ include file="templates/common/header.jsp" %>
 		<main>
 			<div class="container-wide">
-				<%@ include file="hero.jsp" %>
-				<%@ include file="weekly-highlights.jsp" %>
+				<%@ include file="templates/hero/hero.jsp" %>
+				<%@ include file="templates/products/weekly-highlights.jsp" %>
 				<section class="container">
 					<div class="somelia-section">
 						<img
@@ -32,9 +27,9 @@
 					</div>
 				</section>
 			</div>
-			<%@ include file="magazine.jsp" %>
-			<%@ include file="subscription-plans.jsp" %>
-			<%@ include file="footer.jsp" %>
+			<%@ include file="templates/magazine/magazine.jsp" %>
+			<%@ include file="templates/products/subscription-plans.jsp" %>
+			<%@ include file="templates/common/footer.jsp" %>
 		</main>    
 	</body>
 </html>
