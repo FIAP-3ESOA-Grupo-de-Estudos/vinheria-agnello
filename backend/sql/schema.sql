@@ -1,16 +1,3 @@
--- ============================================================================
--- VINHERIA AGNELLO - Schema Database
--- ============================================================================
--- Banco: MySQL 8.0+ ou PostgreSQL 12+
--- Encoding: UTF-8
--- ============================================================================
-
--- Nota: Se usar PostgreSQL, trocar INT por SERIAL/BIGSERIAL e auto_increment
-
--- ============================================================================
--- 1. IDENTIDADE - USUARIO E ENDERECO
--- ============================================================================
-
 CREATE TABLE usuario (
     id_usuario INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(150) NOT NULL,
@@ -22,7 +9,7 @@ CREATE TABLE usuario (
     status ENUM('ativo', 'inativo', 'bloqueado') DEFAULT 'ativo' NOT NULL,
     data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    
+
     INDEX idx_email (email),
     INDEX idx_status (status)
 );
@@ -39,22 +26,18 @@ CREATE TABLE endereco (
     estado VARCHAR(2) NOT NULL,
     principal BOOLEAN DEFAULT FALSE NOT NULL,
     data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    
+
     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
     INDEX idx_usuario (id_usuario),
     INDEX idx_principal (principal)
 );
-
--- ============================================================================
--- 2. CATÁLOGO - CATEGORIA, VINHO, AVALIACAO
--- ============================================================================
 
 CREATE TABLE categoria (
     id_categoria INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(100) NOT NULL UNIQUE,
     descricao TEXT NULL,
     data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    
+
     INDEX idx_nome (nome)
 );
 
@@ -68,7 +51,7 @@ CREATE TABLE vinho (
     pais VARCHAR(50) NOT NULL,
     safra INT NOT NULL,
     preco DECIMAL(10, 2) NOT NULL,
-    teor_alcoolico DECIMAL(4, 2) NOT NULL COMMENT 'Percentual de álcool (ex: 13.5)',
+    teor_alcoolico DECIMAL(4, 2) NOT NULL,
     volume_ml INT NOT NULL DEFAULT 750,
     harmonizacao TEXT NULL,
     nota_degustacao TEXT NULL,
@@ -77,7 +60,7 @@ CREATE TABLE vinho (
     ativo BOOLEAN DEFAULT TRUE NOT NULL,
     data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    
+
     FOREIGN KEY (id_categoria) REFERENCES categoria(id_categoria) ON DELETE RESTRICT,
     INDEX idx_categoria (id_categoria),
     INDEX idx_tipo (tipo),
@@ -95,7 +78,7 @@ CREATE TABLE avaliacao (
     status_aprovacao ENUM('pendente', 'aprovado', 'rejeitado') DEFAULT 'pendente' NOT NULL,
     data_avaliacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     data_aprovacao TIMESTAMP NULL,
-    
+
     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
     FOREIGN KEY (id_vinho) REFERENCES vinho(id_vinho) ON DELETE CASCADE,
     UNIQUE KEY unique_user_vinho (id_usuario, id_vinho),
@@ -104,17 +87,13 @@ CREATE TABLE avaliacao (
     INDEX idx_status (status_aprovacao)
 );
 
--- ============================================================================
--- 3. COMPRA - CARRINHO, PEDIDO, PAGAMENTO
--- ============================================================================
-
 CREATE TABLE carrinho (
     id_carrinho INT PRIMARY KEY AUTO_INCREMENT,
     id_usuario INT NOT NULL,
     status ENUM('ativo', 'convertido', 'abandonado') DEFAULT 'ativo' NOT NULL,
     data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    
+
     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
     INDEX idx_usuario (id_usuario),
     INDEX idx_status (status)
@@ -127,7 +106,7 @@ CREATE TABLE item_carrinho (
     quantidade INT NOT NULL CHECK (quantidade > 0),
     preco_unitario DECIMAL(10, 2) NOT NULL,
     data_adicao TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    
+
     FOREIGN KEY (id_carrinho) REFERENCES carrinho(id_carrinho) ON DELETE CASCADE,
     FOREIGN KEY (id_vinho) REFERENCES vinho(id_vinho) ON DELETE CASCADE,
     UNIQUE KEY unique_carrinho_vinho (id_carrinho, id_vinho),
@@ -147,7 +126,7 @@ CREATE TABLE pedido (
     valor_total DECIMAL(10, 2) NOT NULL,
     status_pedido ENUM('pendente', 'processando', 'enviado', 'entregue', 'cancelado') DEFAULT 'pendente' NOT NULL,
     data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    
+
     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
     FOREIGN KEY (id_endereco) REFERENCES endereco(id_endereco) ON DELETE RESTRICT,
     INDEX idx_usuario (id_usuario),
@@ -162,7 +141,7 @@ CREATE TABLE item_pedido (
     quantidade INT NOT NULL CHECK (quantidade > 0),
     preco_unitario DECIMAL(10, 2) NOT NULL,
     subtotal DECIMAL(10, 2) NOT NULL,
-    
+
     FOREIGN KEY (id_pedido) REFERENCES pedido(id_pedido) ON DELETE CASCADE,
     FOREIGN KEY (id_vinho) REFERENCES vinho(id_vinho) ON DELETE RESTRICT,
     INDEX idx_pedido (id_pedido),
@@ -180,16 +159,12 @@ CREATE TABLE pagamento (
     data_pagamento TIMESTAMP NULL,
     data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    
+
     FOREIGN KEY (id_pedido) REFERENCES pedido(id_pedido) ON DELETE CASCADE,
     UNIQUE KEY unique_pedido (id_pedido),
     INDEX idx_status (status_pagamento),
     INDEX idx_tipo (tipo_pagamento)
 );
-
--- ============================================================================
--- 4. ASSINATURA - PLANO, BENEFICIO, ASSINATURA, PREFERENCIAS
--- ============================================================================
 
 CREATE TABLE plano_assinatura (
     id_plano INT PRIMARY KEY AUTO_INCREMENT,
@@ -200,7 +175,7 @@ CREATE TABLE plano_assinatura (
     premium_only BOOLEAN DEFAULT FALSE NOT NULL,
     ativo BOOLEAN DEFAULT TRUE NOT NULL,
     data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    
+
     INDEX idx_nome (nome),
     INDEX idx_ativo (ativo)
 );
@@ -212,7 +187,7 @@ CREATE TABLE beneficio_plano (
     descricao TEXT NOT NULL,
     valor_beneficio DECIMAL(10, 2) NULL,
     ativo BOOLEAN DEFAULT TRUE NOT NULL,
-    
+
     FOREIGN KEY (id_plano) REFERENCES plano_assinatura(id_plano) ON DELETE CASCADE,
     INDEX idx_plano (id_plano)
 );
@@ -227,7 +202,7 @@ CREATE TABLE assinatura (
     data_proxima_cobranca TIMESTAMP NOT NULL,
     data_cancelamento TIMESTAMP NULL,
     data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    
+
     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
     FOREIGN KEY (id_plano) REFERENCES plano_assinatura(id_plano) ON DELETE RESTRICT,
     INDEX idx_usuario (id_usuario),
@@ -242,7 +217,7 @@ CREATE TABLE preferencia_assinatura (
     faixa_preco_max DECIMAL(10, 2) NULL,
     observacoes TEXT NULL,
     data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    
+
     FOREIGN KEY (id_assinatura) REFERENCES assinatura(id_assinatura) ON DELETE CASCADE,
     UNIQUE KEY unique_assinatura (id_assinatura)
 );
@@ -251,15 +226,11 @@ CREATE TABLE preferencia_assinatura_tipo (
     id_pref_tipo INT PRIMARY KEY AUTO_INCREMENT,
     id_preferencia INT NOT NULL,
     tipo_vinho ENUM('tinto', 'branco', 'rose', 'espumante', 'fortificado') NOT NULL,
-    
+
     FOREIGN KEY (id_preferencia) REFERENCES preferencia_assinatura(id_preferencia) ON DELETE CASCADE,
     UNIQUE KEY unique_pref_tipo (id_preferencia, tipo_vinho),
     INDEX idx_preferencia (id_preferencia)
 );
-
--- ============================================================================
--- 5. CONTEÚDO - ARTIGO
--- ============================================================================
 
 CREATE TABLE artigo (
     id_artigo INT PRIMARY KEY AUTO_INCREMENT,
@@ -273,15 +244,11 @@ CREATE TABLE artigo (
     data_publicacao TIMESTAMP NULL,
     data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    
+
     INDEX idx_status (status_publicacao),
     INDEX idx_autor (autor),
     INDEX idx_data_publicacao (data_publicacao)
 );
-
--- ============================================================================
--- 6. FIDELIZAÇÃO - BENEFICIO, PONTUACAO
--- ============================================================================
 
 CREATE TABLE beneficio_fidelidade (
     id_beneficio_fidelidade INT PRIMARY KEY AUTO_INCREMENT,
@@ -291,7 +258,7 @@ CREATE TABLE beneficio_fidelidade (
     pontos_necessarios INT NOT NULL,
     ativo BOOLEAN DEFAULT TRUE NOT NULL,
     data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    
+
     INDEX idx_tipo (tipo_beneficio),
     INDEX idx_ativo (ativo)
 );
@@ -303,36 +270,22 @@ CREATE TABLE pontuacao_usuario (
     tipo_movimentacao ENUM('compra', 'avaliacao', 'referencia', 'promocao', 'resgate', 'ajuste_admin') NOT NULL,
     descricao VARCHAR(255) NULL,
     data_movimentacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    referencia_id INT NULL COMMENT 'ID da entidade relacionada (pedido, avaliacao, etc)',
-    
+    referencia_id INT NULL,
+
     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
     INDEX idx_usuario (id_usuario),
     INDEX idx_tipo (tipo_movimentacao),
     INDEX idx_data (data_movimentacao)
 );
 
--- ============================================================================
--- ÍNDICES ADICIONAIS PARA PERFORMANCE
--- ============================================================================
-
--- Queries que buscam vinhos por múltiplos critérios
 CREATE INDEX idx_vinho_tipo_preco ON vinho(tipo, preco);
 CREATE INDEX idx_vinho_categoria_ativo ON vinho(id_categoria, ativo);
-
--- Queries de relatório de vendas
 CREATE INDEX idx_pedido_usuario_data ON pedido(id_usuario, data_pedido);
 CREATE INDEX idx_item_pedido_pedido ON item_pedido(id_pedido);
-
--- Queries de assinatura
 CREATE INDEX idx_assinatura_usuario_status ON assinatura(id_usuario, status_assinatura);
 
--- ============================================================================
--- VIEWS ÚTEIS (OPCIONAL - para facilitar queries comuns)
--- ============================================================================
-
--- View: Resumo de vendas por vinho
 CREATE VIEW vw_vendas_por_vinho AS
-SELECT 
+SELECT
     v.id_vinho,
     v.nome,
     v.preco,
@@ -345,9 +298,8 @@ LEFT JOIN item_pedido ip ON v.id_vinho = ip.id_vinho
 LEFT JOIN avaliacao a ON v.id_vinho = a.id_vinho AND a.status_aprovacao = 'aprovado'
 GROUP BY v.id_vinho, v.nome, v.preco;
 
--- View: Clientes com assinatura ativa
 CREATE VIEW vw_clientes_assinatura_ativa AS
-SELECT 
+SELECT
     u.id_usuario,
     u.nome,
     u.email,
@@ -358,7 +310,3 @@ FROM usuario u
 JOIN assinatura a ON u.id_usuario = a.id_usuario
 JOIN plano_assinatura pa ON a.id_plano = pa.id_plano
 WHERE a.status_assinatura = 'ativa';
-
--- ============================================================================
--- FIM DO SCHEMA
--- ============================================================================
