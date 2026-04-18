@@ -21,14 +21,15 @@
         <a href="index.jsp"><img src="assets/images/logo.png" alt="Logo" class="logo" /></a> 
         <nav>
           <ul>
-            <li><a href="shop.jsp">Shop</a></li>
-            <li><a href="catalogo.jsp">Catálogo</a></li>
-            <li><a href="somel.jsp">SomelIA</a></li>
-            <li><a href="magazine.jsp">Revista</a></li>
-            <li><a href="community.jsp">Comunidade</a></li>
+            <li><a href="index.jsp"><span class="mobile-only">🏠</span>Home</a></li>
+            <li><a href="shop.jsp"><span class="mobile-only">🛒</span>Shop</a></li>
+            <li><a href="catalogo.jsp"><span class="mobile-only">📋</span>Catálogo</a></li>
+            <li><a href="somel.jsp"><span class="mobile-only">🤖</span>SomelIA</a></li>
+            <li><a href="magazine.jsp"><span class="mobile-only">🍷</span>Revista</a></li>
+            <li><a href="community.jsp"><span class="mobile-only">👤</span>Comunidade</a></li>
           </ul>
         </nav>
-        <div class="header-icons">
+        <div class="header-icons desktop-only">
           <img
             src="https://placehold.co/20x20"
             alt="Search Icon"

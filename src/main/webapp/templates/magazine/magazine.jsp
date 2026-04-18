@@ -10,8 +10,13 @@
 <section class="container">
 	<div class="magazine-highlights">
 		<h1>Revista Agnello</h1>
-		<h2>Cultura, conhecimento e paixão por vinhos</h2>
-		<ul class="list-items">
+		<h2 class="desktop-only">Cultura, conhecimento e paixão por vinhos</h2>
+		<div class="mobile-only magazine-highlight-box">
+			<span>✦ GIULIO ESCREVE</span>
+			<h1>A Arte da Harmonização Perfeita</h1>
+			<span>8 min de leitura</span>
+		</div>
+		<ul class="list-items desktop-only">
 			<li>
 				<img
 					src="https://placehold.co/650x350"
