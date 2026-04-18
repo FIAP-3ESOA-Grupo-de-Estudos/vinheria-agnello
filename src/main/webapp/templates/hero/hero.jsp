@@ -17,14 +17,14 @@
 		<span class="label">★ RECOMENDAÇÃO DO GIULIO ESTA SEMANA</span>
 		<h1>Terrazas Reserva Malbec 2021</h1>
 		<h2>Mendoza, Argentina</h2>
-		<p>
+		<p class="desktop-only">
 			Notas de ameixa madura, chocolate amargo e especiarias. Taninos
 			aveludados com final longo e elegante.
 		</p>
 		<span class="price">R$ 189,00</span>
 		<div class="buttons">
 			<button class="buy-btn">Comprar Agora</button>
-			<button class="details-btn">Ver Detalhes</button>
+			<button class="details-btn desktop-only">Ver Detalhes</button>
 		</div>
 	</div>
 </section>

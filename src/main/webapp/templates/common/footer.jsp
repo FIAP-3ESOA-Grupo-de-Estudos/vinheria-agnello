@@ -7,7 +7,7 @@
     return;
   }
 %>
-<footer>
+<footer class="desktop-only">
 	<div class="container">
 	  <div class="footer-section">
 	    <img src="assets/images/logo-white-no-bg.png" alt="Logo" class="logo" />

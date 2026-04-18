@@ -7,7 +7,7 @@
     return;
   }
 %>
-<section class="container">
+<section class="container desktop-only">
 	<div class="subscription-plans">
 		<h1>Planos de Assinatura</h1>
 		<h2>Escolha o plano perfeito para receber vinhos selecionados</h2>
