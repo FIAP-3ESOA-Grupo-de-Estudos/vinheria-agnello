@@ -61,3 +61,9 @@ desktop.ini
 # Node (if frontend tooling is added later)
 # ============================================================================
 node_modules/
+
+# ============================================================================
+# Service account keys (if used for GCP integration)
+# ============================================================================
+service-account.json
+/build/
