@@ -1,0 +1,5 @@
+runtime: java17
+
+env_variables:
+  DB_URL: "jdbc:mysql:///vinheria_agnello?cloudSqlInstance=YOUR_PROJECT:YOUR_REGION:YOUR_INSTANCE&socketFactory=com.google.cloud.sql.mysql.SocketFactory&cloudSqlRefreshStrategy=lazy"
+  DB_USER: "YOUR_DB_USER"
