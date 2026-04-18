@@ -1,6 +1,7 @@
 html,
 body {
   min-height: 100%;
+  font-family: "Inter", sans-serif;
 }
 body {
   font-family: "Open Sans", sans-serif;
@@ -18,6 +19,11 @@ main {
   display: flex;
   flex-direction: column;
 }
+
+.userprofile-section .sidebar {
+  flex: 0 0 400px;
+}
+
 @media screen and (min-width: 1200px) {
   a {
     color: #2f2f2f;
@@ -1270,7 +1276,7 @@ main {
     background: #fff;
     height: 42px;
     padding: 0px 10px;
-    margin-bottom: 25px
+    margin-bottom: 25px;
   }
 
   .login-section .login-divider form button {
@@ -1292,11 +1298,319 @@ main {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    color: #2F2F2F;
+    color: #2f2f2f;
     font-family: "Inter", sans-serif;
     font-size: 10px;
     font-style: normal;
     font-weight: 500;
     line-height: normal;
+  }
+
+  .userprofile-section {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    flex-direction: row;
+    gap: 21px;
+  }
+
+  .userprofile-section .sidebar {
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.04);
+    flex: 0 0 400px;
+    display: flex;
+    flex-direction: column;
+    height: 720px;
+  }
+
+  .userprofile-section .main-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .userprofile-section .main-content .profile-analysis {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-top: 20px;
+    padding: 20px;
+    width: 100%;
+    border-radius: 20px;
+    background: #fff;
+  }
+
+  .userprofile-section .main-content .profile-analysis ul:first-child {
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    flex: 0 0 100%;
+  }
+
+  .userprofile-section .main-content .profile-analysis ul:first-child li {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .userprofile-section
+    .main-content
+    .profile-analysis
+    ul:first-child
+    li
+    span:first-child {
+    color: #6b1e2e;
+    font-size: 22px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+  }
+
+  .userprofile-section .main-content .profile-analysis ul:first-child li span {
+    color: #5a5a5a;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 14px; /* 140% */
+  }
+
+  .userprofile-section .main-content .profile-analysis .block {
+    flex: 0 0 327px;
+    width: 327px;
+  }
+  .userprofile-section .main-content .featured ul {
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+    padding: 0;
+  }
+
+  .userprofile-section .main-content .featured ul li {
+    list-style: none;
+    border-radius: 14px;
+    background: #6b1e2e;
+    width: 100%;
+    max-height: 130px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    color: #fff;
+    width: auto;
+  }
+
+  .userprofile-section .main-content .featured ul li span {
+    color: #c6a65b;
+    font-size: 9px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    letter-spacing: 1.08px;
+    margin-bottom: 11px;
+  }
+
+  .userprofile-section .main-content .featured ul li h1 {
+    color: #f5f1ea;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin-bottom: 4px;
+  }
+
+  .userprofile-section .main-content .featured ul li p {
+    color: #d1ccc2;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    margin-bottom: 7px;
+    margin-top: 0;
+  }
+
+  .userprofile-section .main-content .featured ul li button {
+    border-radius: 8px;
+    background: #ffffff15;
+    border-radius: 8px;
+    color: #c6a65b;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    border: none;
+    width: 150px;
+    flex: 0 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .userprofile-section .main-content .featured ul li:first-child {
+    flex: 0 0 327px;
+  }
+
+  .userprofile-section .sidebar .profile-top {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    align-items: center;
+    padding: 20px 20px 0 20px;
+    margin-bottom: 68px;
+  }
+  .userprofile-section .sidebar .profile-top .profile-initials {
+    border-radius: 100%;
+    background: #6b1e2e;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-family: "Inter", sans-serif;
+    font-size: 26px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+  }
+
+  .userprofile-section .sidebar .profile-top h1 {
+    color: #2f2f2f;
+    font-family: "Inter", sans-serif;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin: 0 0 4px 0;
+  }
+
+  .userprofile-section .sidebar .profile-top h2 {
+    color: #c6a65b;
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: bold;
+    line-height: normal;
+    margin: 0;
+  }
+  .userprofile-section .sidebar ul {
+    padding: 0 24px 50px 24px;
+    margin: 0;
+    height: stretch;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .userprofile-section .sidebar ul li {
+    color: #2f2f2f;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    list-style: none;
+    padding: 15px 0 15px 0;
+    border-bottom: solid 1px #d9d9d9;
+  }
+
+  .userprofile-section .sidebar ul li:nth-child(4),
+  .userprofile-section .sidebar ul li:last-child {
+    border: none;
+  }
+
+  .userprofile-section .sidebar .trophies {
+    padding: 24px;
+  }
+  .userprofile-section .sidebar .trophies h1 {
+    color: #2f2f2f;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin-bottom: 11px;
+  }
+
+  .userprofile-section .sidebar .trophies ul {
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 7px;
+  }
+  .userprofile-section .sidebar .trophies ul li {
+    border-radius: 12px;
+    border: 0.5px solid #c6a65b;
+    background: #f5f1ea;
+    display: flex;
+    width: 58px;
+    padding: 13px 4px 14px 4px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 3px;
+  }
+  .userprofile-section .sidebar .trophies ul li img {
+    width: 22px;
+    height: 22px;
+  }
+
+  .userprofile-section .sidebar .trophies ul li span {
+    color: #2f2f2f;
+    text-align: center;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 12px; /* 150% */
+  }
+
+  .profile-analysis .block .progress-bar {
+    /* padding: 0; */
+    display: flex;
+    gap: 18px;
+    padding: 0;
+    flex-direction: column;
+  }
+  .profile-analysis .block .progress-bar li {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .profile-analysis .block .progress-bar label {
+    color: #5a5a5a;
+    /* font-family: Inter; */
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+
+  .profile-analysis .block .progress-bar progress {
+    width: 100%;
+    height: 10px;
+    border-radius: 4px;
+    background-color: #e9e2dd;
+    accent-color: #6b1e2e;
+    border: none;
+    overflow: hidden;
+  }
+
+  .profile-analysis .block .progress-bar progress::-webkit-progress-bar {
+    background-color: #e9e2dd;
+  }
+
+  .profile-analysis .block .progress-bar progress::-webkit-progress-value {
+    background-color: #6b1e2e;
+  }
+
+  .profile-analysis .block .progress-bar progress::-moz-progress-bar {
+    background-color: #6b1e2e;
+  }
+
+  .userprofile-bg {
+    height: stretch;
   }
 }
