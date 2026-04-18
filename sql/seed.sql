@@ -82,18 +82,18 @@ INSERT INTO vinho (
     id_categoria, nome, descricao, tipo, regiao, pais, safra, preco,
     teor_alcoolico, volume_ml, harmonizacao, nota_degustacao, estoque, imagem_url, ativo
 ) VALUES
-(1, 'Cabernet Sauvignon Reserva', 'Vinho tinto estruturado com notas de frutas negras e carvalho.', 'tinto', 'Vale dos Vinhedos', 'Brasil', 2020, 89.90, 13.50, 750, 'Carnes vermelhas e massas intensas', 'Taninos elegantes e final persistente', 35, 'https://example.com/vinhos/cabernet-reserva.jpg', TRUE),
-(1, 'Merlot Especial', 'Vinho tinto macio e frutado, excelente para o dia a dia.', 'tinto', 'Serra Gaúcha', 'Brasil', 2021, 69.90, 12.80, 750, 'Massas, pizzas e queijos semiduros', 'Boa acidez e corpo médio', 42, 'https://example.com/vinhos/merlot-especial.jpg', TRUE),
-(1, 'Malbec Andes', 'Rótulo argentino intenso e aromático.', 'tinto', 'Mendoza', 'Argentina', 2019, 109.90, 14.00, 750, 'Churrasco e cortes bovinos', 'Frutas maduras, especiarias e toque amadeirado', 28, 'https://example.com/vinhos/malbec-andes.jpg', TRUE),
-(2, 'Chardonnay Premium', 'Branco elegante com notas amanteigadas e frutadas.', 'branco', 'Serra Gaúcha', 'Brasil', 2022, 79.90, 12.30, 750, 'Peixes, risotos e massas leves', 'Notas cítricas e final cremoso', 31, 'https://example.com/vinhos/chardonnay-premium.jpg', TRUE),
-(2, 'Sauvignon Blanc Vale', 'Branco fresco e vibrante.', 'branco', 'Vale de Casablanca', 'Chile', 2023, 74.90, 12.10, 750, 'Saladas, frutos do mar e pratos leves', 'Aromas herbáceos e frutas tropicais', 25, 'https://example.com/vinhos/sauvignon-vale.jpg', TRUE),
-(3, 'Rosé Summer', 'Rosé leve, refrescante e muito versátil.', 'rose', 'Provence', 'França', 2023, 84.90, 11.80, 750, 'Entradas, canapés e culinária mediterrânea', 'Morangos, flores e boa acidez', 19, 'https://example.com/vinhos/rose-summer.jpg', TRUE),
-(4, 'Espumante Brut Imperial', 'Espumante sofisticado e equilibrado.', 'espumante', 'Campanha Gaúcha', 'Brasil', 2022, 99.90, 11.90, 750, 'Celebrações, aperitivos e sobremesas leves', 'Perlage fina e notas florais', 50, 'https://example.com/vinhos/brut-imperial.jpg', TRUE),
-(4, 'Espumante Moscatel Doce', 'Espumante aromático e delicadamente doce.', 'espumante', 'Serra Gaúcha', 'Brasil', 2023, 59.90, 7.50, 750, 'Sobremesas e frutas frescas', 'Notas de flores brancas e mel', 46, 'https://example.com/vinhos/moscatel-doce.jpg', TRUE),
-(5, 'Porto Ruby Selection', 'Vinho fortificado intenso e marcante.', 'fortificado', 'Douro', 'Portugal', 2018, 129.90, 19.50, 750, 'Queijos azuis e sobremesas com chocolate', 'Doçura equilibrada e final longo', 17, 'https://example.com/vinhos/porto-ruby.jpg', TRUE),
-(6, 'Syrah Gran Reserva', 'Rótulo premium de grande complexidade.', 'tinto', 'Vale do São Francisco', 'Brasil', 2020, 149.90, 14.20, 750, 'Carnes nobres e pratos robustos', 'Pimenta, frutas negras e barrica bem integrada', 14, 'https://example.com/vinhos/syrah-gran-reserva.jpg', TRUE),
-(6, 'Pinot Noir Prestige', 'Vinho elegante, delicado e refinado.', 'tinto', 'Patagônia', 'Argentina', 2021, 139.90, 13.00, 750, 'Cogumelos, aves e queijos leves', 'Frutas vermelhas, toque terroso e suavidade', 12, 'https://example.com/vinhos/pinot-prestige.jpg', TRUE),
-(7, 'Orgânico Branco Natural', 'Branco de produção orgânica com perfil leve.', 'branco', 'Serra Catarinense', 'Brasil', 2023, 87.90, 11.70, 750, 'Saladas, peixes e pratos vegetarianos', 'Fresco, cítrico e delicado', 22, 'https://example.com/vinhos/organico-branco.jpg', TRUE);
+(1, 'Cabernet Sauvignon Reserva', 'Vinho tinto estruturado com notas de frutas negras e carvalho.', 'tinto', 'Vale dos Vinhedos', 'Brasil', 2020, 89.90, 13.50, 750, 'Carnes vermelhas e massas intensas', 'Taninos elegantes e final persistente', 35, 'src/main/webapp/assets/images/wine-image-1.png', TRUE),
+(1, 'Merlot Especial', 'Vinho tinto macio e frutado, excelente para o dia a dia.', 'tinto', 'Serra Gaúcha', 'Brasil', 2021, 69.90, 12.80, 750, 'Massas, pizzas e queijos semiduros', 'Boa acidez e corpo médio', 42, 'src/main/webapp/assets/images/wine-image-2.png', TRUE),
+(1, 'Malbec Andes', 'Rótulo argentino intenso e aromático.', 'tinto', 'Mendoza', 'Argentina', 2019, 109.90, 14.00, 750, 'Churrasco e cortes bovinos', 'Frutas maduras, especiarias e toque amadeirado', 28, 'src/main/webapp/assets/images/wine-image-3.png', TRUE),
+(2, 'Chardonnay Premium', 'Branco elegante com notas amanteigadas e frutadas.', 'branco', 'Serra Gaúcha', 'Brasil', 2022, 79.90, 12.30, 750, 'Peixes, risotos e massas leves', 'Notas cítricas e final cremoso', 31, 'src/main/webapp/assets/images/wine-image-4.png', TRUE),
+(2, 'Sauvignon Blanc Vale', 'Branco fresco e vibrante.', 'branco', 'Vale de Casablanca', 'Chile', 2023, 74.90, 12.10, 750, 'Saladas, frutos do mar e pratos leves', 'Aromas herbáceos e frutas tropicais', 25, 'src/main/webapp/assets/images/wine-image-5.png', TRUE),
+(3, 'Rosé Summer', 'Rosé leve, refrescante e muito versátil.', 'rose', 'Provence', 'França', 2023, 84.90, 11.80, 750, 'Entradas, canapés e culinária mediterrânea', 'Morangos, flores e boa acidez', 19, 'src/main/webapp/assets/images/wine-image-6.png', TRUE),
+(4, 'Espumante Brut Imperial', 'Espumante sofisticado e equilibrado.', 'espumante', 'Campanha Gaúcha', 'Brasil', 2022, 99.90, 11.90, 750, 'Celebrações, aperitivos e sobremesas leves', 'Perlage fina e notas florais', 50, 'src/main/webapp/assets/images/wine-image-7.png', TRUE),
+(4, 'Espumante Moscatel Doce', 'Espumante aromático e delicadamente doce.', 'espumante', 'Serra Gaúcha', 'Brasil', 2023, 59.90, 7.50, 750, 'Sobremesas e frutas frescas', 'Notas de flores brancas e mel', 46, 'src/main/webapp/assets/images/wine-image-8.png', TRUE),
+(5, 'Porto Ruby Selection', 'Vinho fortificado intenso e marcante.', 'fortificado', 'Douro', 'Portugal', 2018, 129.90, 19.50, 750, 'Queijos azuis e sobremesas com chocolate', 'Doçura equilibrada e final longo', 17, 'src/main/webapp/assets/images/wine-image-9.png', TRUE),
+(6, 'Syrah Gran Reserva', 'Rótulo premium de grande complexidade.', 'tinto', 'Vale do São Francisco', 'Brasil', 2020, 149.90, 14.20, 750, 'Carnes nobres e pratos robustos', 'Pimenta, frutas negras e barrica bem integrada', 14, 'src/main/webapp/assets/images/wine-image-10.png', TRUE),
+(6, 'Pinot Noir Prestige', 'Vinho elegante, delicado e refinado.', 'tinto', 'Patagônia', 'Argentina', 2021, 139.90, 13.00, 750, 'Cogumelos, aves e queijos leves', 'Frutas vermelhas, toque terroso e suavidade', 12, 'src/main/webapp/assets/images/wine-image-11.png', TRUE),
+(7, 'Orgânico Branco Natural', 'Branco de produção orgânica com perfil leve.', 'branco', 'Serra Catarinense', 'Brasil', 2023, 87.90, 11.70, 750, 'Saladas, peixes e pratos vegetarianos', 'Fresco, cítrico e delicado', 22, 'src/main/webapp/assets/images/wine-image-12.png', TRUE);
 
 -- ---------------------------------------------------------
 -- ARTIGOS
@@ -101,10 +101,10 @@ INSERT INTO vinho (
 INSERT INTO artigo (
     titulo, resumo, conteudo, autor, categoria_artigo, status_publicacao, imagem_capa, data_publicacao
 ) VALUES
-('Como escolher um bom vinho para iniciantes', 'Um guia básico para quem está começando no universo dos vinhos.', 'Conteúdo completo do artigo sobre escolha de vinhos para iniciantes, tipos, harmonizações e dicas práticas.', 'Equipe Vinheria Agnello', 'educacao', 'publicado', 'https://example.com/artigos/iniciantes.jpg', NOW()),
-('Harmonização: vinhos tintos e carnes', 'Dicas para combinar vinhos tintos com diferentes cortes.', 'Conteúdo sobre harmonização de vinhos tintos com carnes vermelhas, aves e pratos mais intensos.', 'Equipe Vinheria Agnello', 'harmonizacao', 'publicado', 'https://example.com/artigos/tintos-carnes.jpg', NOW()),
-('Espumantes: quando servir e como apreciar', 'Um conteúdo sobre estilos de espumantes e ocasiões ideais.', 'Conteúdo completo sobre espumantes brut, moscatel, harmonizações e temperatura de serviço.', 'Equipe Vinheria Agnello', 'degustacao', 'publicado', 'https://example.com/artigos/espumantes.jpg', NOW()),
-('Tendências do mercado de vinhos em 2026', 'Panorama sobre consumo, assinaturas e experiência premium.', 'Conteúdo analítico sobre o comportamento do consumidor, clubes de assinatura e personalização.', 'Equipe Vinheria Agnello', 'mercado', 'rascunho', 'https://example.com/artigos/mercado-2026.jpg', NULL);
+('Harmonização: vinhos tintos e carnes', 'Dicas para combinar vinhos tintos com diferentes cortes.', 'Conteúdo sobre harmonização de vinhos tintos com carnes vermelhas, aves e pratos mais intensos.', 'Equipe Vinheria Agnello', 'harmonizacao', 'publicado', 'src/main/webapp/assets/images/article-image-1.png', NOW()),
+('Como escolher um bom vinho para iniciantes', 'Um guia básico para quem está começando no universo dos vinhos.', 'Conteúdo completo do artigo sobre escolha de vinhos para iniciantes, tipos, harmonizações e dicas práticas.', 'Equipe Vinheria Agnello', 'educacao', 'publicado', 'src/main/webapp/assets/images/article-image-2.png', NOW()),
+('Espumantes: quando servir e como apreciar', 'Um conteúdo sobre estilos de espumantes e ocasiões ideais.', 'Conteúdo completo sobre espumantes brut, moscatel, harmonizações e temperatura de serviço.', 'Equipe Vinheria Agnello', 'degustacao', 'publicado', 'src/main/webapp/assets/images/article-image-3.png', NOW()),
+('Entendendo os vinhos orgânicos, biodinâmicos e naturais', 'O que muda no cultivo e na produção desses vinhos que estão conquistando o mundo.', 'Explicação das diferenças entre métodos de cultivo sustentável, certificações orgânicas, práticas biodinâmicas e a filosofia dos vinhos naturais (mínima intervenção).', 'Equipe Vinheria Agnello', 'educacao', 'publicado', 'src/main/webapp/assets/images/article-image-4.png', NOW()),
 
 -- ---------------------------------------------------------
 -- PLANOS DE ASSINATURA
@@ -112,22 +112,25 @@ INSERT INTO artigo (
 INSERT INTO plano_assinatura (
     nome, descricao, valor_mensal, quantidade_garrafas, premium_only, ativo
 ) VALUES
-('Essencial', 'Plano com 2 garrafas por mês e curadoria introdutória.', 99.90, 2, FALSE, TRUE),
-('Selecionado', 'Plano com 4 garrafas variadas e benefícios extras.', 189.90, 4, FALSE, TRUE),
-('Grand Reserva', 'Plano premium com 6 garrafas selecionadas e experiências exclusivas.', 329.90, 6, TRUE, TRUE);
+('Iniciante', 'Para quem está descobrindo o mundo dos vinhos.', 89.00, 2, FALSE, TRUE),
+('Explorador', 'Para quem deseja variedade, personalização e benefícios extras.', 179.00, 4, FALSE, TRUE),
+('Sommelier', 'Experiência premium para quem busca rótulos mais exclusivos.', 299.00, 6, TRUE, TRUE);
 
 -- ---------------------------------------------------------
 -- BENEFÍCIOS DOS PLANOS
 -- ---------------------------------------------------------
 INSERT INTO beneficio_plano (id_plano, tipo_beneficio, descricao, valor_beneficio, ativo) VALUES
-(1, 'curadoria', 'Seleção mensal pensada para quem deseja descobrir novos rótulos.', NULL, TRUE),
-(1, 'conteudo', 'Acesso a recomendações e conteúdo educativo digital.', NULL, TRUE),
-(2, 'desconto', '10% de desconto em compras avulsas no catálogo.', 10.00, TRUE),
-(2, 'comunidade', 'Acesso a grupo exclusivo de assinantes.', NULL, TRUE),
-(2, 'surpresa', 'Possibilidade de receber uma garrafa surpresa em edições especiais.', NULL, TRUE),
-(3, 'evento', 'Convite para degustações exclusivas da vinheria.', NULL, TRUE),
-(3, 'premium', 'Seleção de rótulos premium com prioridade de estoque.', NULL, TRUE),
-(3, 'desconto', '15% de desconto em compras avulsas e kits especiais.', 15.00, TRUE);
+(1, 'garrafas', 'Receba 2 garrafas selecionadas por mês.', NULL, TRUE),
+(1, 'revista_digital', 'Acesso à revista digital com conteúdos sobre vinhos.', NULL, TRUE),
+(1, 'harmonizacao', 'Guia de harmonização para ajudar nas combinações.', NULL, TRUE),
+
+(2, 'garrafas', 'Receba 4 garrafas selecionadas + 1 surpresa.', NULL, TRUE),
+(2, 'sommelia', 'Recomendações personalizadas com a SomelIA.', NULL, TRUE),
+(2, 'comunidade_desconto', 'Acesso à comunidade exclusiva + 10% off em compras.', 10.00, TRUE),
+
+(3, 'garrafas_premium', 'Receba 6 garrafas premium selecionadas.', NULL, TRUE),
+(3, 'degustacao', 'Acesso a degustações com Giulio.', NULL, TRUE),
+(3, 'frete_beneficios', 'Frete grátis + benefícios exclusivos.', NULL, TRUE);
 
 -- ---------------------------------------------------------
 -- ASSINATURAS
