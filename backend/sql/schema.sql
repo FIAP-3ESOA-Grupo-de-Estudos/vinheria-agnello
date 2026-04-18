@@ -284,19 +284,35 @@ CREATE INDEX idx_pedido_usuario_data ON pedido(id_usuario, data_pedido);
 CREATE INDEX idx_item_pedido_pedido ON item_pedido(id_pedido);
 CREATE INDEX idx_assinatura_usuario_status ON assinatura(id_usuario, status_assinatura);
 
+DROP VIEW IF EXISTS vw_vendas_por_vinho;
+
 CREATE VIEW vw_vendas_por_vinho AS
 SELECT
     v.id_vinho,
     v.nome,
     v.preco,
-    COUNT(ip.id_item_pedido) AS total_itens_vendidos,
-    SUM(ip.quantidade) AS quantidade_garrafas,
-    SUM(ip.subtotal) AS valor_total_vendas,
-    AVG(a.nota) AS avaliacao_media
+    COALESCE(vendas.total_itens_vendidos, 0) AS total_itens_vendidos,
+    COALESCE(vendas.quantidade_garrafas, 0) AS quantidade_garrafas,
+    COALESCE(vendas.valor_total_vendas, 0.00) AS valor_total_vendas,
+    avaliacoes.avaliacao_media
 FROM vinho v
-LEFT JOIN item_pedido ip ON v.id_vinho = ip.id_vinho
-LEFT JOIN avaliacao a ON v.id_vinho = a.id_vinho AND a.status_aprovacao = 'aprovado'
-GROUP BY v.id_vinho, v.nome, v.preco;
+LEFT JOIN (
+    SELECT
+        ip.id_vinho,
+        COUNT(ip.id_item_pedido) AS total_itens_vendidos,
+        SUM(ip.quantidade) AS quantidade_garrafas,
+        SUM(ip.subtotal) AS valor_total_vendas
+    FROM item_pedido ip
+    GROUP BY ip.id_vinho
+) vendas ON v.id_vinho = vendas.id_vinho
+LEFT JOIN (
+    SELECT
+        a.id_vinho,
+        AVG(a.nota) AS avaliacao_media
+    FROM avaliacao a
+    WHERE a.status_aprovacao = 'aprovado'
+    GROUP BY a.id_vinho
+) avaliacoes ON v.id_vinho = avaliacoes.id_vinho;
 
 CREATE VIEW vw_clientes_assinatura_ativa AS
 SELECT
