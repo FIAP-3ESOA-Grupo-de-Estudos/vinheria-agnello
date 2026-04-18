@@ -7,11 +7,15 @@ import java.io.InputStream;
 
 public class FirebaseConfig {
     public static void init() throws Exception {
-    	InputStream serviceAccount =
-        	FirebaseConfig.class.getClassLoader().getResourceAsStream("service-account.json");
+        InputStream serviceAccount =
+            FirebaseConfig.class.getClassLoader().getResourceAsStream("service-account.json");
+
+        GoogleCredentials credentials = serviceAccount != null
+            ? GoogleCredentials.fromStream(serviceAccount)
+            : GoogleCredentials.getApplicationDefault();
 
         FirebaseOptions options = FirebaseOptions.builder()
-            .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+            .setCredentials(credentials)
             .build();
 
         FirebaseApp.initializeApp(options);
