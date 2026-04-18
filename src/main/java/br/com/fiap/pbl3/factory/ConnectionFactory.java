@@ -6,15 +6,15 @@ import java.sql.SQLException;
 
 public class ConnectionFactory {
     
-    private static final String URL = "jdbc:mysql://localhost:3306/vinheria_agnello";
-    private static final String USER = "root";
-    private static final String PASS = "";
-    
+    private static final String URL  = System.getenv().getOrDefault("DB_URL",  "jdbc:mysql://localhost:3306/vinheria_agnello");
+    private static final String USER = System.getenv().getOrDefault("DB_USER", "root");
+    private static final String PASS = System.getenv().getOrDefault("DB_PASS", "");
+
     static {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Driver MySQL não encontrado. Adicione mysql-connector-java ao pom.xml", e);
+            throw new RuntimeException("Driver MySQL não encontrado.", e);
         }
     }
 
