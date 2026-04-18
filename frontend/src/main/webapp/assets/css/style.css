@@ -1,3 +1,7 @@
+html,
+body {
+  min-height: 100%;
+}
 body {
   font-family: "Open Sans", sans-serif;
   line-height: 1.6;
@@ -5,6 +9,14 @@ body {
   color: #2f2f2f;
   padding: 0;
   margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 @media screen and (min-width: 1200px) {
   a {
@@ -584,7 +596,7 @@ body {
     background: #2f2f2f;
     color: #fff;
     height: 133px;
-    margin-top: 146px;
+    margin-top: auto;
   }
 
   footer .footer-section {
@@ -1040,7 +1052,7 @@ body {
     border: none;
   }
 
-  .rating-section ul {
+  .product-section .rating-section ul {
     display: flex;
     gap: 24px;
     flex-wrap: wrap;
@@ -1049,7 +1061,7 @@ body {
     padding: 0;
   }
 
-  .rating-section ul li {
+  .product-section .rating-section ul li {
     border-radius: 12px;
     background: #f5f1ea;
     list-style: none;
@@ -1058,7 +1070,7 @@ body {
     padding: 20px;
   }
 
-  .rating-section ul li > div > span:first-child {
+  .product-section.rating-section ul li > div > span:first-child {
     border-radius: 20px;
     display: flex;
     justify-content: center;
@@ -1073,20 +1085,20 @@ body {
     font-weight: 700;
   }
 
-  .rating-section ul li > div {
+  .product-section .rating-section ul li > div {
     display: flex;
     gap: 16px;
     flex-direction: row;
     align-items: center;
   }
 
-  .rating-section ul li > div > div {
+  .product-section .rating-section ul li > div > div {
     display: flex;
     flex-direction: column;
     justify-content: center;
   }
 
-  .rating-section ul li > div h1 {
+  .product-section.rating-section ul li > div h1 {
     color: #2f2f2f;
     font-family: "Inter", sans-serif;
     font-size: 14px;
@@ -1095,7 +1107,7 @@ body {
     line-height: normal;
   }
 
-  .rating-section ul li > div .ratings {
+  .product-section.rating-section ul li > div .ratings {
     color: #c6a65b;
     font-family: "Inter", sans-serif;
     font-size: 12px;
@@ -1104,7 +1116,7 @@ body {
     line-height: normal;
   }
 
-  .rating-section ul li > div .comment {
+  .product-section .rating-section ul li > div .comment {
     color: #5a5a5a;
     font-family: "Inter", sans-serif;
     font-size: 13px;
@@ -1125,7 +1137,7 @@ body {
   }
 
   .recomended-products-section .list-items > li {
-    background-color: #D9D9D9;
+    background-color: #d9d9d9;
     border-radius: 8px;
     display: flex;
     list-style-type: none;
@@ -1184,6 +1196,107 @@ body {
     display: flex;
     flex-direction: column;
     margin-top: auto;
-    background-color: #F5F1EA;
+    background-color: #f5f1ea;
+  }
+
+  .login-section {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    min-height: 100%;
+    width: 100%;
+    flex-direction: row;
+    margin-top: 64px;
+    margin-bottom: 64px;
+  }
+
+  .login-section .login-bg {
+    border-radius: 12px;
+    width: auto;
+    height: 524px;
+    width: 50%;
+  }
+
+  .login-section .login-bg img {
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    width: auto;
+    height: 100%;
+  }
+
+  .login-section .login-divider {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    background-color: #fff;
+    padding: 0 63px 0 91px;
+  }
+
+  .login-section .login-divider h1 {
+    color: #2f2f2f;
+    font-family: "Inter", sans-serif;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin-bottom: 49px;
+  }
+
+  .login-section .login-divider form {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
+  }
+
+  .login-section .login-divider form label {
+    color: #2f2f2f;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+  }
+
+  .login-section .login-divider form input[type="email"],
+  .login-section .login-divider form input[type="password"] {
+    border-radius: 10px;
+    border: 1px solid #2f2f2f;
+    background: #fff;
+    height: 42px;
+    padding: 0px 10px;
+    margin-bottom: 25px
+  }
+
+  .login-section .login-divider form button {
+    border-radius: 8px;
+    background: #6b1e2e;
+    height: 44px;
+    color: #fff;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    border: none;
+    width: 100px;
+  }
+
+  .login-section .login-divider .login-footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    color: #2F2F2F;
+    font-family: "Inter", sans-serif;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
   }
 }
