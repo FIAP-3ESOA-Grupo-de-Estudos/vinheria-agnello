@@ -14,7 +14,7 @@ pageEncoding="UTF-8" %>
             />
           </div>
           <div class="login-divider"><h1>ACESSE SUA CONTA</h1>
-            <form action="login" method="post" class="login-form">
+            <form action="${pageContext.request.contextPath}/auth/login" method="post" class="login-form">
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" required />
                 <label for="password">Senha:</label>
