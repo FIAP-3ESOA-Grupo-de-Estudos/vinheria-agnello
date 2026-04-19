@@ -17,7 +17,12 @@ pageEncoding="UTF-8" %>
                     <h1>Terrazas Reserva</h1>
                     <h2>Mendoza, Argentina</h2>
                     <span class="rating">★★★★★  4.8</span>
-                    <span class="price">R$ 189,00</span>
+                    <span class="price desktop-only">R$ 189,00</span>
+                    <div class="produt-btn-group mobile-only">
+                        <span class="price">R$ 189,00</span>
+                        <button class="buy-btn">Comprar Agora</button>
+                    </div>
+                    <button class="details-btn mobile-only">Adicionar ao clube</button> 
                     <div class="degustacao">
                         <h3>Notas de Degustação</h3>
                         <p>
@@ -26,7 +31,7 @@ pageEncoding="UTF-8" %>
                         </p>
                     </div>
                     <div class="harmonizacao">
-                        <h3>Harmonização</h3>
+                        <h3>✦ HARMONIZAÇÃO</h3>
                         <p>
                             Perfeito com carnes vermelhas, queijos curados e pratos
                             condimentados. Ideal para churrascos e jantares especiais.
@@ -42,14 +47,14 @@ pageEncoding="UTF-8" %>
                             de vinhos que buscam qualidade e personalidade.
                         </p>
                     </div>
-                    <div class="produt-btn-group">
+                    <div class="produt-btn-group desktop-only">
                         <button class="buy-btn">Comprar Agora</button>
                         <button class="details-btn">Adicionar ao clube</button>
                     </div>
                     
                 </div>
             </div>
-            <div class="rating-section">
+            <div class="rating-section desktop-only">
                 <h1>Avaliações dos clientes</h1>
                 <ul>
                     <li>
@@ -91,7 +96,7 @@ pageEncoding="UTF-8" %>
                     
                 </ul>
             </div>
-            <div class="recomended-products-section">
+            <div class="recomended-products-section desktop-only">
                 <h1>Produtos Recomendados</h1>
                 <ul class="list-items">
 			<li>

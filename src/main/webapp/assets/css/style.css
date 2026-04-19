@@ -2589,4 +2589,215 @@ main {
   .welcome-home {
     text-align: center;
   }
+
+  .product-section .product-details .recommended {
+    border-radius: 6px;
+    background: #c6a65b;
+    color: #2f2f2f;
+    font-size: 9px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    letter-spacing: 0.45px;
+    width: 145px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 19px;
+    right: 10px;
+  }
+
+  .product-details {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .product-section .product-details .wine-type {
+    color: #c6a65b;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    letter-spacing: 1.32px;
+  }
+
+  .product-section .product-details h1 {
+    color: #2f2f2f;
+    font-size: 26px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin: 11px 0 3px 0;
+  }
+
+  .product-section .product-details h2 {
+    color: #5a5a5a;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    margin: 0 0 11px 0;
+  }
+
+  .product-section .product-details .rating {
+    color: #c6a65b;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    margin-bottom: 16px;
+  }
+
+  .product-section .product-details .price {
+    color: #6b1e2e;
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    flex: 1;
+  }
+
+  .product-section .product-details .produt-btn-group .buy-btn {
+    border-radius: 8px;
+    background: #6b1e2e;
+    height: 52px;
+    color: #fff;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    width: 200px;
+    border: none;
+  }
+
+  .product-section .product-details .produt-btn-group.mobile-only {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    padding-top: 10px;
+    border-top: solid 1px #d9d9d9;
+  }
+
+  .product-section .product-details .details-btn {
+    border-radius: 8px;
+    border: 1px solid #c6a65b;
+    background: #fff;
+    margin-top: 20px;
+    height: 44px;
+    color: #c6a65b;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 44px;
+    flex: 1;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .product-section .product-details .harmonizacao {
+    display: flex;
+    width: 327px;
+    padding: 14px 16px 11px 16px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 4px;
+    border-radius: 12px;
+    border: 0.5px solid #c6a65b;
+    background: #f5f1ea;
+    font-weight: bold;
+  }
+
+  .product-section .product-details .harmonizacao h3 {
+    color: #c6a65b;
+    font-size: 9px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    letter-spacing: 1.08px;
+  }
+
+  .product-section .product-details .harmonizacao p {
+    color: #2f2f2f;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px; /* 153.846% */
+  }
+
+  .product-section .product-details .porque-escolhemos {
+    border-radius: 12px;
+    display: flex;
+    width: 327px;
+    padding: 14px 16px 8px 16px;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    gap: 7px;
+    margin-top: 10px;
+    background: #f5f1ea;
+    margin-bottom: 100px;
+  }
+
+  .product-section .product-details .porque-escolhemos h3 {
+    color: #6b1e2e;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    letter-spacing: 0.72px;
+    text-transform: uppercase;
+  }
+
+  .product-section .product-details .porque-escolhemos p {
+    color: #5a5a5a;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px; /* 153.846% */
+  }
+
+  .product-section .rating-section {
+    padding: 20px;
+  }
+  .product-section .rating-section h1 {
+    color: #2f2f2f;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+  }
+
+  .product-section .rating-section ul {
+    padding: 0;
+  }
+  .product-section .rating-section ul li {
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .product-section .rating-section ul li div {
+    display: flex;
+    flex-direction: row;
+  }
+  .product-section .rating-section span {
+    border-radius: 14px;
+    background: #f5f1ea;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b1e2e;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+  }
 }
