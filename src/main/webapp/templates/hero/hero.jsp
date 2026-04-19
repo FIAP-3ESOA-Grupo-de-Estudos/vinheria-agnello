@@ -23,8 +23,8 @@
 		</p>
 		<span class="price">R$ 189,00</span>
 		<div class="buttons">
-			<button class="buy-btn">Comprar Agora</button>
-			<button class="details-btn desktop-only">Ver Detalhes</button>
+			<button class="buy-btn"  onclick="window.location.href='carrinho.jsp'">Comprar Agora</button>
+			<button class="details-btn desktop-only"  onclick="window.location.href='produto.jsp'">Ver Detalhes</button>
 		</div>
 	</div>
 </section>

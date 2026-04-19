@@ -24,7 +24,7 @@ pageEncoding="UTF-8" %>
           </section>
 
           <section class="highlights">
-            <img src="https://placehold.co/100x130" alt="Destaque do Mês" class="highlight-image" />
+            <img src="assets/images/wine-image-6.png" alt="Destaque do Mês" class="highlight-image" />
             <div class="description">
                 <span class="top-label">✦ Descoberta do mês</span>
                 <h2>Casa Valduga Gran Leopoldina</h2>
@@ -42,7 +42,7 @@ pageEncoding="UTF-8" %>
           <ul class="list-items">
             <li>
               <img
-                src="https://placehold.co/225x211"
+                src="assets/images/wine-image-5.png"
                 alt="Wine 1"
                 class="highlight-image"
               />
@@ -55,7 +55,7 @@ pageEncoding="UTF-8" %>
             </li>
             <li>
               <img
-                src="https://placehold.co/225x211"
+                src="assets/images/wine-image-6.png"
                 alt="Wine 1"
                 class="highlight-image"
               />
@@ -68,7 +68,7 @@ pageEncoding="UTF-8" %>
             </li>
             <li>
               <img
-                src="https://placehold.co/225x211"
+                src="assets/images/wine-image-7.png"
                 alt="Wine 1"
                 class="highlight-image"
               />
@@ -81,7 +81,7 @@ pageEncoding="UTF-8" %>
             </li>
             <li>
               <img
-                src="https://placehold.co/225x211"
+                src="assets/images/wine-image-8.png"
                 alt="Wine 1"
                 class="highlight-image"
               />
@@ -94,7 +94,7 @@ pageEncoding="UTF-8" %>
             </li>
             <li>
               <img
-                src="https://placehold.co/225x211"
+                src="assets/images/wine-image-9.png"
                 alt="Wine 1"
                 class="highlight-image"
               />
@@ -107,7 +107,7 @@ pageEncoding="UTF-8" %>
             </li>
             <li>
               <img
-                src="https://placehold.co/225x211"
+                src="assets/images/wine-image-10.png"
                 alt="Wine 1"
                 class="highlight-image"
               />
@@ -120,7 +120,7 @@ pageEncoding="UTF-8" %>
             </li>
             <li>
               <img
-                src="https://placehold.co/225x211"
+                src="assets/images/wine-image-11.png"
                 alt="Wine 1"
                 class="highlight-image"
               />
@@ -133,7 +133,7 @@ pageEncoding="UTF-8" %>
             </li>
             <li>
               <img
-                src="https://placehold.co/225x211"
+                src="assets/images/wine-image-12.png"
                 alt="Wine 1"
                 class="highlight-image"
               />
