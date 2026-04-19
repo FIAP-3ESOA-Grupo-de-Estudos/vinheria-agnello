@@ -12,9 +12,9 @@
 		<h1>Destaque da Semana</h1>
 		<h2 class="desktop-only">Seleção curatorizada por Giulio</h2>
 		<ul class="list-items">
-			<li>
+			<li onclick="window.location.href='produto.jsp'">
 				<img
-					src="https://placehold.co/225x225"
+					src="assets/images/wine-image-1.png"
 					alt="Wine 1"
 					class="highlight-image"
 				/>
@@ -25,9 +25,9 @@
 					<span class="price">R$ 189,00</span>
 				</div>
 			</li>
-			<li>
+			<li onclick="window.location.href='produto.jsp'">
 				<img
-					src="https://placehold.co/225x225"
+					src="assets/images/wine-image-2.png"
 					alt="Wine 1"
 					class="highlight-image"
 				/>
@@ -38,9 +38,9 @@
 					<span class="price">R$ 189,00</span>
 				</div>
 			</li>
-			<li>
+			<li onclick="window.location.href='produto.jsp'">
 				<img
-					src="https://placehold.co/225x225"
+					src="assets/images/wine-image-3.png"
 					alt="Wine 1"
 					class="highlight-image"
 				/>
@@ -51,9 +51,9 @@
 					<span class="price">R$ 189,00</span>
 				</div>
 			</li>
-			<li>
+			<li onclick="window.location.href='produto.jsp'">
 				<img
-					src="https://placehold.co/225x225"
+					src="assets/images/wine-image-4.png"
 					alt="Wine 1"
 					class="highlight-image"
 				/>

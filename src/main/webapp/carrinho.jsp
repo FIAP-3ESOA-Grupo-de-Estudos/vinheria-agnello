@@ -14,7 +14,7 @@ pageEncoding="UTF-8" %>
                             <ul class="all-cart-items">
                                 <li class="cart-item">
                                     <div class="cart-item-container">
-                                        <img src="https://placehold.co/98x96" alt="Vinho 2" />
+                                        <img src="assets/images/wine-image-10.png" alt="Vinho 2" />
                                         <div class="item-info">
                                             <h2>Vinho Branco Seco</h2>
                                             <span class="description">Mendoza, Argentina</span>
@@ -25,7 +25,7 @@ pageEncoding="UTF-8" %>
                                 </li>
                                 <li class="cart-item">
                                     <div class="cart-item-container">
-                                        <img src="https://placehold.co/98x96" alt="Vinho 2" />
+                                        <img src="assets/images/wine-image-11.png" alt="Vinho 2" />
                                         <div class="item-info">
                                             <h2>Vinho Tinto Suave</h2>
                                             <span class="description">Mendoza, Argentina</span>

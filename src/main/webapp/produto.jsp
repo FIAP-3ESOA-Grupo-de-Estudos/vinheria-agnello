@@ -20,9 +20,9 @@ pageEncoding="UTF-8" %>
                     <span class="price desktop-only">R$ 189,00</span>
                     <div class="produt-btn-group mobile-only">
                         <span class="price">R$ 189,00</span>
-                        <button class="buy-btn">Comprar Agora</button>
+                        <button class="buy-btn" onclick="window.location.href='carrinho.jsp'">Comprar Agora</button>
                     </div>
-                    <button class="details-btn mobile-only">Adicionar ao clube</button> 
+                    <button class="details-btn mobile-only" onclick="window.location.href='perfil.jsp'">Adicionar ao clube</button> 
                     <div class="degustacao">
                         <h3>Notas de Degustação</h3>
                         <p>
@@ -48,8 +48,8 @@ pageEncoding="UTF-8" %>
                         </p>
                     </div>
                     <div class="produt-btn-group desktop-only">
-                        <button class="buy-btn">Comprar Agora</button>
-                        <button class="details-btn">Adicionar ao clube</button>
+                        <button class="buy-btn" onclick="window.location.href='carrinho.jsp'">Comprar Agora</button>
+                        <button class="details-btn" onclick="window.location.href='perfil.jsp'">Adicionar ao clube</button>
                     </div>
                     
                 </div>
@@ -101,7 +101,7 @@ pageEncoding="UTF-8" %>
                 <ul class="list-items">
 			<li>
 				<img
-					src="https://placehold.co/225x225"
+					src="assets/images/wine-image-6.png"
 					alt="Wine 1"
 					class="highlight-image"
 				/>
@@ -114,7 +114,7 @@ pageEncoding="UTF-8" %>
 			</li>
 			<li>
 				<img
-					src="https://placehold.co/225x225"
+					src="assets/images/wine-image-5.png"
 					alt="Wine 1"
 					class="highlight-image"
 				/>
@@ -127,7 +127,7 @@ pageEncoding="UTF-8" %>
 			</li>
 			<li>
 				<img
-					src="https://placehold.co/225x225"
+					src="assets/images/wine-image-4.png"
 					alt="Wine 1"
 					class="highlight-image"
 				/>
@@ -140,7 +140,7 @@ pageEncoding="UTF-8" %>
 			</li>
 			<li>
 				<img
-					src="https://placehold.co/225x225"
+					src="assets/images/wine-image-3.png"
 					alt="Wine 1"
 					class="highlight-image"
 				/>

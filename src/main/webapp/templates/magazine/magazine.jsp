@@ -19,7 +19,7 @@
 		<ul class="list-items desktop-only">
 			<li>
 				<img
-					src="https://placehold.co/650x350"
+					src="assets/images/article_650x350.png"
 					alt="Magazine 1"
 					class="highlight-image"
 				/>
@@ -33,7 +33,7 @@
 				<ul>
 					<li>
 						<img
-							src="https://placehold.co/140x140"
+							src="assets/images/article_2_140x140.png"
 							alt="Magazine 1"
 							class="highlight-image"
 						/>
@@ -45,7 +45,7 @@
 					</li>
 					<li>
 						<img
-							src="https://placehold.co/140x140"
+							src="assets/images/article_3_140x140.png"
 							alt="Magazine 1"
 							class="highlight-image"
 						/>
