@@ -4,9 +4,9 @@ pageEncoding="UTF-8" %>
     <%@ include
     file="templates/common/header.jsp" %>
     <main>
-      <div class="container">
+      <div class="cart-page container">
         <h1>Meu Carrinho</h1>
-        <span>2 itens</span>
+        <span class="count-items-label">2 itens</span>
         <section class="cart-section">
                 <div class="main-content">
                     <div class="container">
