@@ -1,4 +1,4 @@
-package br.com.fiap.pbl3.model;
+package br.com.vinheriaagnello.model;
 
 import java.math.BigDecimal;
 
@@ -46,7 +46,7 @@ public class PlanoAssinatura {
 
     @Override
     public String toString() {
-        return "PlanoAssinatura{" + "idPlano=" + idPlano + ", nome='" + nome + '\'' + 
+        return "PlanoAssinatura{" + "idPlano=" + idPlano + ", nome='" + nome + '\'' +
                ", valorMensal=" + valorMensal + '}';
     }
 }

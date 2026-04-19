@@ -1,4 +1,4 @@
-package br.com.fiap.pbl3.model;
+package br.com.vinheriaagnello.model;
 
 import java.time.LocalDateTime;
 
@@ -26,7 +26,7 @@ public class Usuario {
         this.senha = senha;
     }
 
-    public Usuario(Integer idUsuario, String nome, String email, String senha, String telefone, 
+    public Usuario(Integer idUsuario, String nome, String email, String senha, String telefone,
                    String tipoUsuario, String status, LocalDateTime dataCadastro, LocalDateTime dataAtualizacao) {
         this.idUsuario = idUsuario;
         this.nome = nome;

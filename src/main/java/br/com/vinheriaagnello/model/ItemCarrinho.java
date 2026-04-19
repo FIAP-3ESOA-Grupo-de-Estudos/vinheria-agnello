@@ -1,4 +1,4 @@
-package br.com.fiap.pbl3.model;
+package br.com.vinheriaagnello.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -44,7 +44,7 @@ public class ItemCarrinho {
 
     @Override
     public String toString() {
-        return "ItemCarrinho{" + "idItemCarrinho=" + idItemCarrinho + ", quantidade=" + quantidade + 
+        return "ItemCarrinho{" + "idItemCarrinho=" + idItemCarrinho + ", quantidade=" + quantidade +
                ", subtotal=" + calcularSubtotal() + '}';
     }
 }

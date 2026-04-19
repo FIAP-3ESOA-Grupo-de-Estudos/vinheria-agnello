@@ -1,4 +1,4 @@
-package br.com.fiap.pbl3.model;
+package br.com.vinheriaagnello.model;
 
 import java.math.BigDecimal;
 
@@ -40,7 +40,7 @@ public class ItemPedido {
 
     @Override
     public String toString() {
-        return "ItemPedido{" + "idItemPedido=" + idItemPedido + ", quantidade=" + quantidade + 
+        return "ItemPedido{" + "idItemPedido=" + idItemPedido + ", quantidade=" + quantidade +
                ", subtotal=" + subtotal + '}';
     }
 }

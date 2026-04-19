@@ -1,4 +1,4 @@
-package br.com.fiap.pbl3.model;
+package br.com.vinheriaagnello.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
