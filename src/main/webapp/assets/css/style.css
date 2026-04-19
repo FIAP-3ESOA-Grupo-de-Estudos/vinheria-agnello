@@ -799,6 +799,7 @@ main {
     height: fit-content;
     border: none;
     text-align: left;
+    cursor: pointer;
   }
 
   .catalog-section .list-items > li img {
