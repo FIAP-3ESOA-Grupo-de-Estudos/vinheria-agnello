@@ -29,23 +29,23 @@ pageEncoding="UTF-8" %>
                         <h1>Conquistas</h1>
                         <ul>
                             <li>
-                                <img src="https://placehold.co/64x64" alt="Trophy 1" />
+                                <img src="assets/images/badge-icon.png" alt="Trophy 1" />
                                 <span>Primeiro Vinho</span>
                             </li>
                             <li>
-                                <img src="https://placehold.co/64x64" alt="Trophy 2" />
+                                <img src="assets/images/badge-icon.png" alt="Trophy 2" />
                                 <span>10 Avaliações</span>
                             </li>
                             <li>
-                                <img src="https://placehold.co/64x64" alt="Trophy 3" />
+                                <img src="assets/images/badge-icon.png" alt="Trophy 3" />
                                 <span>Explorador</span>
                             </li>
                             <li>
-                                <img src="https://placehold.co/64x64" alt="Trophy 4" />
+                                <img src="assets/images/badge-icon.png" alt="Trophy 4" />
                                 <span>Harmonizador</span>
                             </li>
                             <li>
-                                <img src="https://placehold.co/64x64" alt="Trophy 5" />
+                                <img src="assets/images/badge-icon.png" alt="Trophy 5" />
                                 <span>Sommelier</span>
                             </li>
                         </ul>
