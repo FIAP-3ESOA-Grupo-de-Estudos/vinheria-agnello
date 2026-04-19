@@ -1,4 +1,4 @@
-package br.com.fiap.pbl3.dao;
+package br.com.vinheriaagnello.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,36 +9,27 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.fiap.pbl3.factory.ConnectionFactory;
-import br.com.fiap.pbl3.model.Pagamento;
+import br.com.vinheriaagnello.config.DatabaseConfig;
+import br.com.vinheriaagnello.model.Pagamento;
 
 public class PagamentoDAO implements DAO<Pagamento, Integer> {
-    
-    private Connection conexao;
-
-    public PagamentoDAO() {
-        try {
-            this.conexao = ConnectionFactory.getConexao();
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao obter conexão", e);
-        }
-    }
 
     @Override
     public void inserir(Pagamento pagamento) throws Exception {
         String sql = "INSERT INTO pagamento (id_pedido, tipo_pagamento, status_pagamento, valor, " +
                      "parcelas, codigo_transacao) VALUES (?, ?, ?, ?, ?, ?)";
-        
-        try (PreparedStatement stmt = conexao.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+        try (Connection conexao = DatabaseConfig.getDataSource().getConnection();
+             PreparedStatement stmt = conexao.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setInt(1, pagamento.getIdPedido());
             stmt.setString(2, pagamento.getTipoPagamento());
             stmt.setString(3, pagamento.getStatusPagamento());
             stmt.setBigDecimal(4, pagamento.getValor());
             stmt.setInt(5, pagamento.getParcelas());
             stmt.setString(6, pagamento.getCodigoTransacao());
-            
+
             stmt.executeUpdate();
-            
+
             try (ResultSet rs = stmt.getGeneratedKeys()) {
                 if (rs.next()) {
                     pagamento.setIdPagamento(rs.getInt(1));
@@ -50,11 +41,12 @@ public class PagamentoDAO implements DAO<Pagamento, Integer> {
     @Override
     public Pagamento buscarPorId(Integer id) throws Exception {
         String sql = "SELECT * FROM pagamento WHERE id_pagamento = ?";
-        
-        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+        try (Connection conexao = DatabaseConfig.getDataSource().getConnection();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
-            
+
             if (rs.next()) {
                 return mapearPagamento(rs);
             }
@@ -64,11 +56,12 @@ public class PagamentoDAO implements DAO<Pagamento, Integer> {
 
     public Pagamento buscarPorPedido(Integer idPedido) throws Exception {
         String sql = "SELECT * FROM pagamento WHERE id_pedido = ?";
-        
-        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+        try (Connection conexao = DatabaseConfig.getDataSource().getConnection();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
             stmt.setInt(1, idPedido);
             ResultSet rs = stmt.executeQuery();
-            
+
             if (rs.next()) {
                 return mapearPagamento(rs);
             }
@@ -80,10 +73,11 @@ public class PagamentoDAO implements DAO<Pagamento, Integer> {
     public List<Pagamento> listarTodos() throws Exception {
         String sql = "SELECT * FROM pagamento ORDER BY data_criacao DESC";
         List<Pagamento> pagamentos = new ArrayList<>();
-        
-        try (Statement stmt = conexao.createStatement();
+
+        try (Connection conexao = DatabaseConfig.getDataSource().getConnection();
+             Statement stmt = conexao.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-            
+
             while (rs.next()) {
                 pagamentos.add(mapearPagamento(rs));
             }
@@ -94,11 +88,12 @@ public class PagamentoDAO implements DAO<Pagamento, Integer> {
     public List<Pagamento> listarPorStatus(String status) throws Exception {
         String sql = "SELECT * FROM pagamento WHERE status_pagamento = ? ORDER BY data_criacao DESC";
         List<Pagamento> pagamentos = new ArrayList<>();
-        
-        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+        try (Connection conexao = DatabaseConfig.getDataSource().getConnection();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
             stmt.setString(1, status);
             ResultSet rs = stmt.executeQuery();
-            
+
             while (rs.next()) {
                 pagamentos.add(mapearPagamento(rs));
             }
@@ -110,24 +105,25 @@ public class PagamentoDAO implements DAO<Pagamento, Integer> {
     public void atualizar(Pagamento pagamento) throws Exception {
         String sql = "UPDATE pagamento SET status_pagamento = ?, codigo_transacao = ?, data_pagamento = ? " +
                      "WHERE id_pagamento = ?";
-        
-        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+        try (Connection conexao = DatabaseConfig.getDataSource().getConnection();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
             stmt.setString(1, pagamento.getStatusPagamento());
             stmt.setString(2, pagamento.getCodigoTransacao());
-            stmt.setTimestamp(3, pagamento.getDataPagamento() != null ? 
+            stmt.setTimestamp(3, pagamento.getDataPagamento() != null ?
                              Timestamp.valueOf(pagamento.getDataPagamento()) : null);
             stmt.setInt(4, pagamento.getIdPagamento());
-            
+
             stmt.executeUpdate();
         }
     }
 
     @Override
     public void deletar(Integer id) throws Exception {
-        // Pagamentos não devem ser deletados, apenas cancelados
         String sql = "UPDATE pagamento SET status_pagamento = 'cancelado' WHERE id_pagamento = ?";
-        
-        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+        try (Connection conexao = DatabaseConfig.getDataSource().getConnection();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.executeUpdate();
         }
@@ -142,22 +138,22 @@ public class PagamentoDAO implements DAO<Pagamento, Integer> {
         pagamento.setValor(rs.getBigDecimal("valor"));
         pagamento.setParcelas(rs.getInt("parcelas"));
         pagamento.setCodigoTransacao(rs.getString("codigo_transacao"));
-        
+
         Timestamp dataPagamento = rs.getTimestamp("data_pagamento");
         if (dataPagamento != null) {
             pagamento.setDataPagamento(dataPagamento.toLocalDateTime());
         }
-        
+
         Timestamp dataCriacao = rs.getTimestamp("data_criacao");
         if (dataCriacao != null) {
             pagamento.setDataCriacao(dataCriacao.toLocalDateTime());
         }
-        
+
         Timestamp dataAtualizacao = rs.getTimestamp("data_atualizacao");
         if (dataAtualizacao != null) {
             pagamento.setDataAtualizacao(dataAtualizacao.toLocalDateTime());
         }
-        
+
         return pagamento;
     }
 }

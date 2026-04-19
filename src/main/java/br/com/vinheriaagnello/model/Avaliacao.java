@@ -1,4 +1,4 @@
-package br.com.fiap.pbl3.model;
+package br.com.vinheriaagnello.model;
 
 import java.time.LocalDateTime;
 
@@ -49,7 +49,7 @@ public class Avaliacao {
 
     @Override
     public String toString() {
-        return "Avaliacao{" + "idAvaliacao=" + idAvaliacao + ", nota=" + nota + 
+        return "Avaliacao{" + "idAvaliacao=" + idAvaliacao + ", nota=" + nota +
                ", status='" + statusAprovacao + '\'' + '}';
     }
 }

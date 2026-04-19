@@ -1,4 +1,4 @@
-package br.com.fiap.pbl3.model;
+package br.com.vinheriaagnello.model;
 
 import java.time.LocalDateTime;
 
@@ -18,7 +18,7 @@ public class Carrinho {
         this.idUsuario = idUsuario;
     }
 
-    public Carrinho(Integer idCarrinho, Integer idUsuario, String status, 
+    public Carrinho(Integer idCarrinho, Integer idUsuario, String status,
                     LocalDateTime dataCriacao, LocalDateTime dataAtualizacao) {
         this.idCarrinho = idCarrinho;
         this.idUsuario = idUsuario;

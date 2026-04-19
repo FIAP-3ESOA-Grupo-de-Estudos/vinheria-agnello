@@ -1,4 +1,4 @@
-package br.com.fiap.pbl3.model;
+package br.com.vinheriaagnello.model;
 
 import java.time.LocalDateTime;
 
@@ -54,7 +54,7 @@ public class Assinatura {
 
     @Override
     public String toString() {
-        return "Assinatura{" + "idAssinatura=" + idAssinatura + ", idUsuario=" + idUsuario + 
+        return "Assinatura{" + "idAssinatura=" + idAssinatura + ", idUsuario=" + idUsuario +
                ", status='" + statusAssinatura + '\'' + '}';
     }
 }

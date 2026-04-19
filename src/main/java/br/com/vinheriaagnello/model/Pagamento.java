@@ -1,4 +1,4 @@
-package br.com.fiap.pbl3.model;
+package br.com.vinheriaagnello.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -59,7 +59,7 @@ public class Pagamento {
 
     @Override
     public String toString() {
-        return "Pagamento{" + "idPagamento=" + idPagamento + ", idPedido=" + idPedido + 
+        return "Pagamento{" + "idPagamento=" + idPagamento + ", idPedido=" + idPedido +
                ", valor=" + valor + ", status='" + statusPagamento + '\'' + '}';
     }
 }

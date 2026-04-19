@@ -1,4 +1,4 @@
-package br.com.fiap.pbl3.dao;
+package br.com.vinheriaagnello.dao;
 
 import java.util.List;
 

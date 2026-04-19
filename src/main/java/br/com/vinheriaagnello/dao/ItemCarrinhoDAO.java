@@ -1,4 +1,4 @@
-package br.com.fiap.pbl3.dao;
+package br.com.vinheriaagnello.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,34 +9,25 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.fiap.pbl3.factory.ConnectionFactory;
-import br.com.fiap.pbl3.model.ItemCarrinho;
+import br.com.vinheriaagnello.config.DatabaseConfig;
+import br.com.vinheriaagnello.model.ItemCarrinho;
 
 public class ItemCarrinhoDAO implements DAO<ItemCarrinho, Integer> {
-    
-    private Connection conexao;
-
-    public ItemCarrinhoDAO() {
-        try {
-            this.conexao = ConnectionFactory.getConexao();
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao obter conexão", e);
-        }
-    }
 
     @Override
     public void inserir(ItemCarrinho item) throws Exception {
         String sql = "INSERT INTO item_carrinho (id_carrinho, id_vinho, quantidade, preco_unitario) " +
                      "VALUES (?, ?, ?, ?)";
-        
-        try (PreparedStatement stmt = conexao.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+        try (Connection conexao = DatabaseConfig.getDataSource().getConnection();
+             PreparedStatement stmt = conexao.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setInt(1, item.getIdCarrinho());
             stmt.setInt(2, item.getIdVinho());
             stmt.setInt(3, item.getQuantidade());
             stmt.setBigDecimal(4, item.getPrecoUnitario());
-            
+
             stmt.executeUpdate();
-            
+
             try (ResultSet rs = stmt.getGeneratedKeys()) {
                 if (rs.next()) {
                     item.setIdItemCarrinho(rs.getInt(1));
@@ -48,11 +39,12 @@ public class ItemCarrinhoDAO implements DAO<ItemCarrinho, Integer> {
     @Override
     public ItemCarrinho buscarPorId(Integer id) throws Exception {
         String sql = "SELECT * FROM item_carrinho WHERE id_item_carrinho = ?";
-        
-        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+        try (Connection conexao = DatabaseConfig.getDataSource().getConnection();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
-            
+
             if (rs.next()) {
                 return mapearItemCarrinho(rs);
             }
@@ -63,11 +55,12 @@ public class ItemCarrinhoDAO implements DAO<ItemCarrinho, Integer> {
     public List<ItemCarrinho> listarPorCarrinho(Integer idCarrinho) throws Exception {
         String sql = "SELECT * FROM item_carrinho WHERE id_carrinho = ? ORDER BY data_adicao";
         List<ItemCarrinho> itens = new ArrayList<>();
-        
-        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+        try (Connection conexao = DatabaseConfig.getDataSource().getConnection();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
             stmt.setInt(1, idCarrinho);
             ResultSet rs = stmt.executeQuery();
-            
+
             while (rs.next()) {
                 itens.add(mapearItemCarrinho(rs));
             }
@@ -79,10 +72,11 @@ public class ItemCarrinhoDAO implements DAO<ItemCarrinho, Integer> {
     public List<ItemCarrinho> listarTodos() throws Exception {
         String sql = "SELECT * FROM item_carrinho ORDER BY data_adicao DESC";
         List<ItemCarrinho> itens = new ArrayList<>();
-        
-        try (Statement stmt = conexao.createStatement();
+
+        try (Connection conexao = DatabaseConfig.getDataSource().getConnection();
+             Statement stmt = conexao.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-            
+
             while (rs.next()) {
                 itens.add(mapearItemCarrinho(rs));
             }
@@ -93,12 +87,13 @@ public class ItemCarrinhoDAO implements DAO<ItemCarrinho, Integer> {
     @Override
     public void atualizar(ItemCarrinho item) throws Exception {
         String sql = "UPDATE item_carrinho SET quantidade = ?, preco_unitario = ? WHERE id_item_carrinho = ?";
-        
-        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+        try (Connection conexao = DatabaseConfig.getDataSource().getConnection();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
             stmt.setInt(1, item.getQuantidade());
             stmt.setBigDecimal(2, item.getPrecoUnitario());
             stmt.setInt(3, item.getIdItemCarrinho());
-            
+
             stmt.executeUpdate();
         }
     }
@@ -106,8 +101,9 @@ public class ItemCarrinhoDAO implements DAO<ItemCarrinho, Integer> {
     @Override
     public void deletar(Integer id) throws Exception {
         String sql = "DELETE FROM item_carrinho WHERE id_item_carrinho = ?";
-        
-        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+        try (Connection conexao = DatabaseConfig.getDataSource().getConnection();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.executeUpdate();
         }
@@ -115,8 +111,9 @@ public class ItemCarrinhoDAO implements DAO<ItemCarrinho, Integer> {
 
     public void deletarPorCarrinho(Integer idCarrinho) throws Exception {
         String sql = "DELETE FROM item_carrinho WHERE id_carrinho = ?";
-        
-        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+        try (Connection conexao = DatabaseConfig.getDataSource().getConnection();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
             stmt.setInt(1, idCarrinho);
             stmt.executeUpdate();
         }
@@ -129,12 +126,12 @@ public class ItemCarrinhoDAO implements DAO<ItemCarrinho, Integer> {
         item.setIdVinho(rs.getInt("id_vinho"));
         item.setQuantidade(rs.getInt("quantidade"));
         item.setPrecoUnitario(rs.getBigDecimal("preco_unitario"));
-        
+
         Timestamp dataAdicao = rs.getTimestamp("data_adicao");
         if (dataAdicao != null) {
             item.setDataAdicao(dataAdicao.toLocalDateTime());
         }
-        
+
         return item;
     }
 }
