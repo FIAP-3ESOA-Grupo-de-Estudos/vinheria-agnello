@@ -2800,4 +2800,106 @@ main {
     font-weight: 700;
     line-height: normal;
   }
+
+    .login-section {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    min-height: 100%;
+    width: 100%;
+    flex-direction: row;
+    /* margin-top: 64px; */
+    flex-direction: column;
+    margin-bottom: 64px;
+  }
+
+  .login-section .login-bg {
+    /* border-radius: 12px; */
+    width: auto;
+    /* height: 524px; */
+    /* width: 50%; */
+  }
+
+  .login-section .login-bg img {
+    /* border-top-left-radius: 20px; */
+    /* display: flex; */
+    /* flex: 1; */
+    /* height: 100%; */
+  }
+
+  .login-section .login-divider {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    background-color: #fff;
+    padding: 30px;
+  }
+
+  .login-section .login-divider h1 {
+    color: #2f2f2f;
+    font-family: "Inter", sans-serif;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin-bottom: 49px;
+  }
+
+  .login-section .login-divider form {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
+  }
+
+  .login-section .login-divider form label {
+    color: #2f2f2f;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+  }
+
+  .login-section .login-divider form input[type="email"],
+  .login-section .login-divider form input[type="password"] {
+    border-radius: 10px;
+    border: 1px solid #2f2f2f;
+    background: #fff;
+    height: 42px;
+    padding: 0px 10px;
+    margin-bottom: 25px;
+  }
+
+  .login-section .login-divider form button {
+    border-radius: 8px;
+    background: #6b1e2e;
+    height: 44px;
+    color: #fff;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    border: none;
+    width: 100px;
+  }
+
+  .login-section .login-divider .login-footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    color: #2f2f2f;
+    font-family: "Inter", sans-serif;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+  }
 }
