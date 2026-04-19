@@ -41,8 +41,11 @@ pageEncoding="UTF-8" %>
                             </ul>
                             <p>No catálogo Agnello, recomendo nosso Sauvignon Blanc para queijos suaves ou o Cabernet Sauvignon para os mais intensos. Qual tipo de queijo você tem em mente? Posso sugerir rótulos específicos! 😊</p>
                         </div>
+                        <div class="footer mobile-only">
+                        <input type="text" placeholder="Pergunte à Sommelia..."><button>↗</button>
                     </div>
-                    <div class="footer">
+                    </div>
+                    <div class="footer desktop-only">
                         <input type="text" placeholder="Pergunte à Sommelia..."><button>↗</button>
                     </div>
                     </section>
