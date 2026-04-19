@@ -26,7 +26,7 @@
             <li><a href="catalogo.jsp"><span class="mobile-only">📋</span>Catálogo</a></li>
             <li><a href="sommelia.jsp"><span class="mobile-only">🤖</span>SomelIA</a></li>
             <li ><a href="index.jsp"><span class="mobile-only">🍷</span>Revista</a></li>
-            <li><a href="index.jsp"><span class="mobile-only">👤</span>Comunidade</a></li>
+            <li><a href="perfil.jsp"><span class="mobile-only">👤</span>Perfil</a></li>
           </ul>
         </nav>
         <div class="header-icons desktop-only">
