@@ -25,11 +25,11 @@
             <li><a href="produto.jsp"><span class="mobile-only">🛒</span>Shop</a></li>
             <li><a href="catalogo.jsp"><span class="mobile-only">📋</span>Catálogo</a></li>
             <li><a href="sommelia.jsp"><span class="mobile-only">🤖</span>SomelIA</a></li>
-            <li ><a href="index.jsp"><span class="mobile-only">🍷</span>Revista</a></li>
+            <!-- <li ><a href="index.jsp"><span class="mobile-only">🍷</span>Revista</a></li> -->
             <li><a href="perfil.jsp"><span class="mobile-only">👤</span>Perfil</a></li>
           </ul>
         </nav>
-        <div class="header-icons desktop-only">
+        <!-- <div class="header-icons desktop-only">
           <img
             src="https://placehold.co/20x20"
             alt="Search Icon"
@@ -45,6 +45,6 @@
             alt="Cart Icon"
             class="cart-icon"
           />
-        </div>
+        </div> -->
       </div>
     </header>
