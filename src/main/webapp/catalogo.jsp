@@ -40,7 +40,7 @@ pageEncoding="UTF-8" %>
             </div>
           </section>
           <ul class="list-items">
-            <li>
+            <li onclick="window.location.href='produto.jsp'">
               <img
                 src="assets/images/wine-image-5.png"
                 alt="Wine 1"
@@ -53,7 +53,7 @@ pageEncoding="UTF-8" %>
                 <span class="price">R$ 189,00</span>
               </div>
             </li>
-            <li>
+            <li onclick="window.location.href='produto.jsp'">
               <img
                 src="assets/images/wine-image-6.png"
                 alt="Wine 1"
@@ -66,7 +66,7 @@ pageEncoding="UTF-8" %>
                 <span class="price">R$ 189,00</span>
               </div>
             </li>
-            <li>
+            <li onclick="window.location.href='produto.jsp'">
               <img
                 src="assets/images/wine-image-7.png"
                 alt="Wine 1"
@@ -79,7 +79,7 @@ pageEncoding="UTF-8" %>
                 <span class="price">R$ 189,00</span>
               </div>
             </li>
-            <li>
+            <li onclick="window.location.href='produto.jsp'">
               <img
                 src="assets/images/wine-image-8.png"
                 alt="Wine 1"
@@ -92,7 +92,7 @@ pageEncoding="UTF-8" %>
                 <span class="price">R$ 189,00</span>
               </div>
             </li>
-            <li>
+            <li onclick="window.location.href='produto.jsp'">
               <img
                 src="assets/images/wine-image-9.png"
                 alt="Wine 1"
@@ -105,7 +105,7 @@ pageEncoding="UTF-8" %>
                 <span class="price">R$ 189,00</span>
               </div>
             </li>
-            <li>
+            <li onclick="window.location.href='produto.jsp'">
               <img
                 src="assets/images/wine-image-10.png"
                 alt="Wine 1"
@@ -118,7 +118,7 @@ pageEncoding="UTF-8" %>
                 <span class="price">R$ 189,00</span>
               </div>
             </li>
-            <li>
+            <li onclick="window.location.href='produto.jsp'">
               <img
                 src="assets/images/wine-image-11.png"
                 alt="Wine 1"
@@ -131,7 +131,7 @@ pageEncoding="UTF-8" %>
                 <span class="price">R$ 189,00</span>
               </div>
             </li>
-            <li>
+            <li onclick="window.location.href='produto.jsp'">
               <img
                 src="assets/images/wine-image-12.png"
                 alt="Wine 1"
