@@ -28,7 +28,7 @@ pageEncoding="UTF-8" %>
             <div class="description">
                 <span class="top-label">✦ Descoberta do mês</span>
                 <h2>Casa Valduga Gran Leopoldina</h2>
-                <p>
+                <p class="desktop-only">
                 Cabernet Sauvignon · Vale dos Vinhedos, Brasil · 2020<br/>
                 Encorpado e complexo, com aromas de frutas negras, baunilha e tabaco.
                 </p>
