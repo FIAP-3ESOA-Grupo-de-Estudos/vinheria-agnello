@@ -21,7 +21,7 @@
 					<li>Revista digital</li>
 					<li>Guia de harmonização</li>
 				</ul>
-				<button class="subscribe-btn">Assinar Agora</button>
+				<button class="subscribe-btn" onclick="window.location.href='login.jsp'">Assinar Agora</button>
 			</li>
 			<li class="plan-item highlight">
 				<h3>Explorador</h3>
@@ -32,7 +32,7 @@
 					<li>SomelIA personalizada</li>
 					<li>Comunidade + 10% off</li>
 				</ul>
-				<button class="subscribe-btn">Assinar Agora</button>
+				<button class="subscribe-btn" onclick="window.location.href='login.jsp'">Assinar Agora</button>
 			</li>
 			<li class="plan-item">
 				<h3>Sommelier</h3>
@@ -43,7 +43,7 @@
 					<li>Degustações com Giulio</li>
 					<li>Frete grátis + benefícios</li>
 				</ul>
-				<button class="subscribe-btn">Assinar Agora</button>
+				<button class="subscribe-btn" onclick="window.location.href='login.jsp'">Assinar Agora</button>
 			</li>
 		</ul>
 	</div>

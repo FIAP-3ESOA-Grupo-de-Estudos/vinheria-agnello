@@ -13,9 +13,9 @@
 				<%@ include file="templates/hero/hero.jsp" %>
 				<%@ include file="templates/products/weekly-highlights.jsp" %>
 				<section class="order-container container">
-					<div class="somelia-section">
+					<div class="somelia-section" onclick="window.location.href='sommelia.jsp'">
 						<img
-							src="https://placehold.co/64x64"
+							src="assets/images/robot.png"
 							alt="SomelIA"
 							class="newsletter-image"
 						/>
@@ -28,8 +28,8 @@
 							</p>
 							<p class="mobile-only">Descubra o vinho perfeito para hoje</p>
 						</div>
-						<button class="learn-more-btn desktop-only">Experimentar Agora</button>
-						<button class="learn-more-btn mobile-only">></button>
+						<button class="learn-more-btn desktop-only" onclick="window.location.href='sommelia.jsp'">Experimentar Agora</button>
+						<button class="learn-more-btn mobile-only" onclick="window.location.href='sommelia.jsp'">></button>
 					</div>
 					
 				</section>

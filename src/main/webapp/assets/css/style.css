@@ -235,6 +235,7 @@ main {
     width: 280px;
     flex-flow: column;
     padding-top: 25px;
+    cursor: pointer;
   }
 
   .weekly-highlights .list-items > li img {
@@ -298,6 +299,7 @@ main {
     justify-content: space-between;
     padding: 40px 60px;
     margin: 0px auto 60px auto;
+    cursor: pointer;
   }
 
   .somelia-section > div {
@@ -332,16 +334,22 @@ main {
     line-height: normal;
     flex: 0 0 180px;
     border: none;
+    cursor: pointer;
   }
 
   .somelia-section img {
     margin-right: 36px;
+    height: 94px;
+    margin-top: -10px;
   }
 
   .magazine-highlights {
     padding: 0;
     margin-bottom: 60px;
   }
+  .magazine-highlights .list-items > li > ul > li img.highlight-image {
+    width: 140px;
+}
 
   .magazine-highlights .list-items {
     display: flex;
@@ -367,6 +375,7 @@ main {
     flex-direction: column;
     justify-content: flex-end;
     padding: 20px;
+    color: #fff;
   }
 
   .magazine-highlights .item-details h3 {
@@ -588,6 +597,7 @@ main {
     font-style: normal;
     font-weight: 600;
     line-height: normal;
+    cursor: pointer;
   }
 
   .plan-item.highlight button {
@@ -601,6 +611,7 @@ main {
     font-style: normal;
     font-weight: 600;
     line-height: normal;
+    cursor: pointer;
   }
 
   footer {
@@ -1046,6 +1057,7 @@ main {
     font-weight: 600;
     line-height: normal;
     border: none;
+    cursor: pointer;
   }
 
   .main-product-wrapper .product-details .details-btn {
@@ -1061,6 +1073,7 @@ main {
     width: 280px;
     height: 56px;
     /* border: none; */
+    cursor: pointer;
   }
 
   .product-section .rating-section ul {
@@ -2355,6 +2368,8 @@ main {
     display: flex;
     margin: 20px;
     flex: 1;
+    justify-content: center;
+    align-items: center;
   }
 
   .somelia-section h1 {
@@ -2395,7 +2410,8 @@ main {
   }
 
   .somelia-section img.newsletter-image {
-    width: 44px;
+    width: auto;
+    height: 44px;
     margin-left: 13px;
     margin-right: 13px;
   }
@@ -3994,4 +4010,6 @@ section.catalog-section h1 {
   .cart-page .count-items-label {
     margin-left: 20px;
   }
+
+  
 }
