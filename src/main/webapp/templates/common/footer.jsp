@@ -12,11 +12,12 @@
 	  <div class="footer-section">
 	    <img src="assets/images/logo-white-no-bg.png" alt="Logo" class="logo" />
 	    <ul>
-	      <li><a href="/shop.html">Shop</a></li>
-	      <li><a href="/catalogo">Catálogo</a></li>
-	      <li><a href="/somel.html">SomelIA</a></li>
-	      <li><a href="/magazine.html">Revista</a></li>
-	      <li><a href="/community.html">Comunidade</a></li>
+	      <li><a href="index.jsp"><span class="mobile-only">🏠</span>Home</a></li>
+            <li><a href="produto.jsp"><span class="mobile-only">🛒</span>Shop</a></li>
+            <li><a href="catalogo.jsp"><span class="mobile-only">📋</span>Catálogo</a></li>
+            <li><a href="sommelia.jsp"><span class="mobile-only">🤖</span>SomelIA</a></li>
+            <!-- <li ><a href="index.jsp"><span class="mobile-only">🍷</span>Revista</a></li> -->
+            <li><a href="perfil.jsp"><span class="mobile-only">👤</span>Perfil</a></li>
 	    </ul>
 	  </div>
 	  <div class="copyright-section">
