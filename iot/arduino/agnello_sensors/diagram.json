@@ -1,0 +1,54 @@
+{
+	"version": 1,
+	"author": "Vinheria Agnello",
+	"editor": "wokwi",
+	"parts": [
+		{
+			"type": "wokwi-esp32-devkit-v1",
+			"id": "esp",
+			"top": 0,
+			"left": 0,
+			"attrs": {}
+		},
+		{
+			"type": "wokwi-dht22",
+			"id": "dht1",
+			"top": -110,
+			"left": 260,
+			"attrs": {
+				"temperature": "22",
+				"humidity": "55"
+			}
+		},
+		{
+			"type": "wokwi-resistor",
+			"id": "r1",
+			"top": -50,
+			"left": 180,
+			"attrs": {
+				"value": "10000"
+			}
+		},
+		{
+			"type": "wokwi-photoresistor-sensor",
+			"id": "ldr1",
+			"top": 130,
+			"left": 250,
+			"attrs": {
+				"lux": "500"
+			}
+		}
+	],
+	"connections": [
+		["esp:TX0", "$serialMonitor:RX", "", []],
+		["esp:RX0", "$serialMonitor:TX", "", []],
+		["esp:3V3", "dht1:VCC", "red"],
+		["esp:GND.1", "dht1:GND", "black"],
+		["esp:D15", "dht1:SDA", "green"],
+		["esp:3V3", "r1:1", "red"],
+		["r1:2", "dht1:SDA", "green"],
+		["esp:3V3", "ldr1:VCC", "red"],
+		["esp:GND.1", "ldr1:GND", "black"],
+		["esp:34", "ldr1:AO", "blue"]
+	]
+}

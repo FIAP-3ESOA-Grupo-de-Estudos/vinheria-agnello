@@ -63,6 +63,8 @@ desktop.ini
 # Node (if frontend tooling is added later)
 # ============================================================================
 node_modules/
+iot/node-red/.config*.json
+iot/node-red/flows_cred.json
 
 # ============================================================================
 # Service account keys (if used for GCP integration)
