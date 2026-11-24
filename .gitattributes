@@ -1,0 +1,9 @@
+# Files that run or are read inside Linux containers keep LF line endings on every
+# checkout, Windows included: a CRLF shell script or dnsmasq.conf breaks the container.
+*.sh           text eol=lf
+*.conf         text eol=lf
+*.yml          text eol=lf
+*.yaml         text eol=lf
+*.properties   text eol=lf
+Dockerfile     text eol=lf
+Jenkinsfile    text eol=lf
