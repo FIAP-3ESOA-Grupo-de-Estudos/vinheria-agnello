@@ -60,7 +60,8 @@ pipeline {
                 echo 'Subindo microsserviços e validando DHCP/DNS (dnsmasq, catalog, order, probe)...'
                 sh '''
                     docker compose -f ${DEPLOY_DIR}/infra/docker-compose.yml down --remove-orphans || true
-                    docker compose -f ${DEPLOY_DIR}/infra/docker-compose.yml up -d --build
+                    docker compose -f ${DEPLOY_DIR}/infra/docker-compose.yml build --no-cache
+                    docker compose -f ${DEPLOY_DIR}/infra/docker-compose.yml up -d
                 '''
             }
         }
