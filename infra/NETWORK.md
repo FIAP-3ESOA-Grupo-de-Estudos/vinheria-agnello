@@ -26,10 +26,10 @@ Clientes dinâmicos (o probe) recebem de 172.28.0.100 a 172.28.0.199, com leases
 
 | Host | Porta | Publicada na máquina host |
 |---|---|---|
-| Catalog Service | 8081 | sim, `127.0.0.1:8081` |
-| Order Service | 8082 | sim, `127.0.0.1:8082` |
+| Catalog Service | 8081, HTTPS | sim, `127.0.0.1:8081` |
+| Order Service | 8082, HTTPS | sim, `127.0.0.1:8082` |
 | dnsmasq (DNS 53, DHCP 67) | | não |
 
-As portas dos microsserviços são publicadas só no loopback (`127.0.0.1`): ainda não há autenticação, então outras máquinas da rede não devem alcançá-las (o item 3 acrescenta o gateway e o JWT).
+As portas dos microsserviços são publicadas só no loopback (`127.0.0.1`): mesmo com TLS e JWT (item 3), outras máquinas da rede não devem alcançá-las.
 
-O tráfego entre os microsserviços é HTTP puro de propósito, para que os itens 2 e 3 partam desta base. O Order Service encontra o Catalog Service pela configuração `CATALOG_URL`, `http://catalog.agnello.internal:8081`: o nome DNS, resolvido pelo dnsmasq, e a porta.
+O tráfego entre os microsserviços é HTTPS (TLS 1.3) com JWT; veja [`security/README.md`](security/README.md). O Order Service encontra o Catalog Service pela configuração `CATALOG_URL`, `https://catalog.agnello.internal:8081`: o nome DNS, resolvido pelo dnsmasq, que também é o nome no certificado. Só o `docker-compose.insecure.yml` volta ao HTTP puro, para a comparação no Wireshark.

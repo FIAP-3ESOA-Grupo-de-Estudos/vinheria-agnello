@@ -1,6 +1,6 @@
 # Vinheria Agnello: infraestrutura e serviços essenciais (fase 07, item 1)
 
-Ambiente Docker Compose que simula parte da arquitetura da Vinheria Agnello: dois microsserviços, o Catalog Service e o Order Service, numa rede privada com DNS e DHCP. Os dois são registrados na zona `agnello.internal` e conversam por nome. Este é o item 1 da fase 07 ("Infraestrutura e Serviços Essenciais"); o item 2 (pipeline Jenkins) e o item 3 (comunicação segura e DevSecOps) partem desta base.
+Ambiente Docker Compose que simula parte da arquitetura da Vinheria Agnello: dois microsserviços, o Catalog Service e o Order Service, numa rede privada com DNS e DHCP. Os dois são registrados na zona `agnello.internal` e conversam por nome. Este é o item 1 da fase 07 ("Infraestrutura e Serviços Essenciais"); o item 2 (pipeline Jenkins) e o item 3 (comunicação segura e DevSecOps) partem desta base. **O item 3 já está aplicado aqui:** os dois serviços falam só HTTPS e exigem JWT; veja [`security/README.md`](security/README.md).
 
 ## 1. Arquitetura em palavras
 
@@ -10,6 +10,7 @@ Tudo vive numa rede bridge do Docker, `agnello-net` (172.28.0.0/24). Os contêin
 - **Catalog Service**: lista os vinhos ativos e devolve um vinho por id (`GET /v1/vinhos`, `GET /v1/vinhos/{id}`).
 - **Order Service**: devolve um Carrinho (`GET /v1/carrinhos/{id}`). Ele guarda só o id do vinho e a quantidade; o nome e o preço vêm do Catalog Service, pelo nome DNS (`CATALOG_URL`), a cada leitura.
 - **probe**: job de uso único que faz um handshake DHCP de verdade com o dnsmasq e termina.
+- **pki** (item 3): job de uso único que gera, na primeira subida, os certificados TLS, a chave JWT e a senha de demonstração no volume `agnello-pki`.
 
 Cada microsserviço guarda os próprios dados, em memória (Database per Service do documento de arquitetura). Java 17, Spring Boot 3.5 e Maven; a compilação acontece dentro do Docker.
 
@@ -17,7 +18,7 @@ Cada microsserviço guarda os próprios dados, em memória (Database per Service
                    rede agnello-net (172.28.0.0/24)
 
  localhost:8082 ─▶ ┌────────────────────┐                               ┌────────────────────┐ ◀─ localhost:8081
-                   │ Order Service      │ HTTP, por nome                │ Catalog Service    │
+                   │ Order Service      │ HTTPS + JWT, por nome         │ Catalog Service    │
                    │ 172.28.0.12  :8082 │ ────────────────────────────▶ │ 172.28.0.11  :8081 │
                    └────────────────────┘ catalog.agnello.internal:8081 └────────────────────┘
 
@@ -36,12 +37,13 @@ A ordem de início é guiada pela saúde: dnsmasq, depois os dois microsserviço
 
 ## 3. Comandos
 
-Rode tudo a partir da raiz do repositório. Não há credenciais nem arquivo `.env`.
+Rode tudo a partir da raiz do repositório. Não há credenciais no repositório nem arquivo `.env`: o job `pki` gera certificados e segredos no volume `agnello-pki`.
 
 ```bash
 docker compose -f infra/docker-compose.yml up -d --build   # inicia tudo
 infra/verify.sh                                            # verifica: PASS ou FAIL por check, código 0 se tudo passa
-docker compose -f infra/docker-compose.yml down           # para e remove contêineres e rede
+docker compose -f infra/docker-compose.yml down           # para e remove contêineres e rede (o volume agnello-pki fica)
+docker compose -f infra/docker-compose.yml down -v        # idem, e apaga certificados e segredos
 ```
 
 O `up` retorna quando o dnsmasq e os dois microsserviços estão saudáveis e o probe já foi iniciado. O `verify.sh` leva poucos segundos e pode rodar quantas vezes quiser, sem reset.
@@ -55,11 +57,18 @@ PASS  startup: Order Service is healthy
 PASS  dns: catalog.agnello.internal resolves to 172.28.0.11
 PASS  dns: order.agnello.internal resolves to 172.28.0.12
 PASS  dhcp: probe completes discover, offer, request and acknowledge, gets a pool address and registers in DNS
-PASS  catalog: wine list is returned through catalog.agnello.internal:8081 from a client container on agnello-net
-PASS  order: Carrinho 1 is returned with the names and prices of the Catalog Service and total 259.70 through order.agnello.internal:8082
+PASS  tools: the agnello-netlab image (curl, tcpdump, tshark) is available
+PASS  tls: the Catalog Service refuses plain HTTP on catalog.agnello.internal:8081
+PASS  tls: catalog.agnello.internal:8081 answers HTTPS with a certificate the internal CA issued for that name
+PASS  jwt: the Catalog Service answers 401 to a wine list read without a token
+PASS  auth: the Order Service answers 401 to a login with a wrong password
+PASS  auth: the Order Service trades the demo customer's password for a JWT (HTTP Basic, POST /v1/auth/token)
+PASS  jwt: the Order Service answers 401 to a Carrinho read without a token
+PASS  jwt: the Catalog Service answers 401 to the customer's token (issued for the Order Service)
+PASS  order: with the customer's token, Carrinho 1 comes back with the Catalog Service's names and prices and total 259.70 (Order to Catalog over HTTPS with a service JWT)
 PASS  dns: dnsmasq's query log shows catalog.agnello.internal looked up from the Order Service (172.28.0.12)
 
-Summary: 9 PASS, 0 FAIL
+Summary: 16 PASS, 0 FAIL
 ```
 
 Um check que falha mostra `FAIL` e, na linha de baixo, o motivo. Com a pilha parada, os checks de início dizem qual comando rodar.
@@ -82,7 +91,7 @@ Name:	catalog.agnello.internal
 Address: 172.28.0.11
 ```
 
-Troque `catalog` por `order` (172.28.0.12). Um nome desconhecido na zona responde `NXDOMAIN`. O log mostra que o próprio Order Service usa o dnsmasq (rode antes um `curl localhost:8082/v1/carrinhos/1`):
+Troque `catalog` por `order` (172.28.0.12). Um nome desconhecido na zona responde `NXDOMAIN`. O log mostra que o próprio Order Service usa o dnsmasq (rode antes o `verify.sh` ou a leitura do Carrinho mais abaixo):
 
 ```bash
 docker logs agnello-dnsmasq 2>&1 | grep -E 'query\[A\] catalog\.agnello\.internal from 172\.28\.0\.12' | sort -u
@@ -121,10 +130,14 @@ Address: 172.28.0.199
 
 O lease tem cinco colunas: instante de expiração, MAC, endereço, nome e identificador do cliente. O endereço está dentro do pool (100 a 199) e o nome `probe` passou a resolver na zona: DHCP e DNS cooperando.
 
-**Order Service chamando o Catalog Service.** O Order Service não guarda nome nem preço: pergunta ao Catalog Service, pelo nome DNS.
+**Order Service chamando o Catalog Service.** O Order Service não guarda nome nem preço: pergunta ao Catalog Service, pelo nome DNS, por HTTPS e com um token de serviço. Da máquina host, primeiro faça login (no Windows, acrescente `--ssl-no-revoke` a cada `curl`; detalhes em [`security/README.md`](security/README.md)):
 
 ```bash
-curl -s localhost:8082/v1/carrinhos/1
+docker exec agnello-order cat /run/agnello/ca.crt > infra/security/ca.crt
+SENHA=$(docker exec agnello-order cat /run/agnello/demo-password)
+TOKEN=$(curl -s --cacert infra/security/ca.crt -u "cliente:$SENHA" -X POST https://localhost:8082/v1/auth/token \
+  | sed 's/.*"access_token":"\([^"]*\)".*/\1/')
+curl -s --cacert infra/security/ca.crt -H "Authorization: Bearer $TOKEN" https://localhost:8082/v1/carrinhos/1
 ```
 
 ```
@@ -135,8 +148,8 @@ Com o Catalog Service parado, o Order Service continua saudável e responde 503,
 
 ```bash
 docker stop agnello-catalog
-curl -s -o /dev/null -w 'HTTP %{http_code}\n' localhost:8082/v1/carrinhos/1   # HTTP 503
-curl -s localhost:8082/health                                                 # {"status":"UP"}
+curl -s --cacert infra/security/ca.crt -o /dev/null -w 'HTTP %{http_code}\n' -H "Authorization: Bearer $TOKEN" https://localhost:8082/v1/carrinhos/1   # HTTP 503
+curl -s --cacert infra/security/ca.crt https://localhost:8082/health   # {"status":"UP"}
 docker start agnello-catalog
 ```
 
@@ -152,13 +165,13 @@ docker start agnello-catalog
 
 **Por que não `.local`:** o sufixo `.local` é reservado ao multicast DNS (mDNS), que colide com o DNS comum. `.internal` é um sufixo reservado para uso privado. Não troque a zona por `.local`.
 
-**Por que só o Order Service usa a zona:** só ele precisa resolver um nome, o `catalog.agnello.internal`, e por isso tem o dnsmasq como resolvedor (`dns: 172.28.0.2` no Compose). A máquina host não usa o dnsmasq e a rede bridge pode viver dentro de uma VM do Docker, então não conte com resolver `catalog.agnello.internal` no host. O host usa as portas publicadas, `localhost:8081` e `localhost:8082`, só no loopback (`127.0.0.1`): ainda não há autenticação, e assim outras máquinas da rede não alcançam os microsserviços.
+**Por que só o Order Service usa a zona:** só ele precisa resolver um nome, o `catalog.agnello.internal`, e por isso tem o dnsmasq como resolvedor (`dns: 172.28.0.2` no Compose). A máquina host não usa o dnsmasq e a rede bridge pode viver dentro de uma VM do Docker, então não conte com resolver `catalog.agnello.internal` no host. O host usa as portas publicadas, `localhost:8081` e `localhost:8082`, só no loopback (`127.0.0.1`): mesmo com TLS e JWT, outras máquinas da rede não alcançam os microsserviços (defesa em profundidade). Os certificados valem também para `localhost` e `127.0.0.1`.
 
 **Cuidado com o dnsmasq:** não use `docker stop` nele. O Docker libera o 172.28.0.2 e o próximo contêiner de endereço dinâmico (o probe) pode ficar com ele, e o dnsmasq não volta ("Address already in use"). Para pausar, use `docker pause agnello-dnsmasq` e `docker unpause agnello-dnsmasq`.
 
 ## 8. Testes unitários
 
-Cada microsserviço tem testes de API (MockMvc) que não precisam de Docker. No Order Service, o Catalog Service é simulado na fronteira HTTP (cobre o 503). Com Java 17 e Maven:
+Cada microsserviço tem testes de API (MockMvc) que não precisam de Docker. No Order Service, o Catalog Service é simulado na fronteira HTTP (cobre o 503 e confere o token de serviço de cada chamada). Os testes `*SecurityTest` cobrem as recusas de JWT e de login. Com Java 17 e Maven:
 
 ```bash
 (cd services/catalog-service && mvn -B test)
@@ -167,6 +180,6 @@ Cada microsserviço tem testes de API (MockMvc) que não precisam de Docker. No 
 
 ## 9. Fora do escopo
 
-API Gateway, autenticação (JWT ou qualquer outra), TLS e criptografia, captura com Wireshark, pipeline Jenkins, os outros seis microsserviços da arquitetura entregue (Authentication, User, Inventory, Payment, Membership e Quality Monitoring), escrita em Carrinhos e o fluxo de Pedido, banco de dados, retry e circuit breaker, e vários dnsmasq ou sub-redes.
+API Gateway, os outros seis microsserviços da arquitetura entregue (Authentication, User, Inventory, Payment, Membership e Quality Monitoring), escrita em Carrinhos e o fluxo de Pedido, banco de dados, retry e circuit breaker, e vários dnsmasq ou sub-redes. Autenticação, TLS e a captura com Wireshark são o item 3, em [`security/README.md`](security/README.md); o pipeline Jenkins é o item 2.
 
-O tráfego entre os microsserviços é HTTP puro de propósito, para o item 3 comparar com esta base. Para anexar um novo contêiner a `agnello-net`, dê a ele um endereço fixo fora do pool (100 a 199) e registre-o no `dnsmasq.conf`, no `docker-compose.yml`, no `NETWORK.md` e no `verify.sh`.
+Para comparar com o tráfego sem criptografia, [`docker-compose.insecure.yml`](docker-compose.insecure.yml) sobe os mesmos serviços em HTTP puro; o `security/capture.sh` usa esse modo e volta ao HTTPS no fim. Para anexar um novo contêiner a `agnello-net`, dê a ele um endereço fixo fora do pool (100 a 199) e registre-o no `dnsmasq.conf`, no `docker-compose.yml`, no `NETWORK.md` e no `verify.sh`.

@@ -52,6 +52,10 @@ desktop.ini
 .env.local
 .env.*.local
 *.pem
+# Item 3: packet captures and local copies of the environment's CA (all generated, see infra/security).
+infra/security/captures/
+infra/security/*.crt
+*.pcap
 
 # ============================================================================
 # Logs
