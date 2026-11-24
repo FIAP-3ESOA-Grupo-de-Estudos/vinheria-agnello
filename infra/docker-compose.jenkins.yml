@@ -1,0 +1,36 @@
+﻿name: vinheria-agnello-ci
+
+services:
+  jenkins:
+    build: ./jenkins
+    image: agnello-jenkins
+    container_name: agnello-jenkins
+    # Root inside the container to use the host's Docker socket. Whoever controls this Jenkins controls
+    # the host's Docker: keep it on the loopback and never expose it.
+    user: root
+    environment:
+      JENKINS_ADMIN_PASSWORD: ${JENKINS_ADMIN_PASSWORD:?defina JENKINS_ADMIN_PASSWORD antes de subir o Jenkins}
+      # Branch the job builds.
+      PIPELINE_BRANCH: ${PIPELINE_BRANCH:-main}
+    ports:
+      - "127.0.0.1:8085:8080"
+    volumes:
+      - //var/run/docker.sock:/var/run/docker.sock
+      # The repository, read-only: the job clones it with Git (file://), so only commits are built.
+      - ../:/var/workspace/vinheria-agnello:ro
+      - jenkins-home:/var/jenkins_home
+      - maven-repo:/root/.m2
+      - vinheria-deploy:/var/www/vinheria-agnello
+      - vinheria-webapps:/var/www/webapps
+
+volumes:
+  # Build history and job state.
+  jenkins-home:
+  # Maven dependencies, downloaded once.
+  maven-repo:
+  # Publishing folder: infra/, services/ and deploy_info.txt.
+  vinheria-deploy:
+    name: vinheria-deploy
+  # Tomcat's webapps (ROOT.war), mounted by the vinheria-web container the pipeline starts.
+  vinheria-webapps:
+    name: vinheria-webapps
