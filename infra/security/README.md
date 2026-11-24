@@ -165,34 +165,27 @@ Abra `infra/security/captures/inseguro.pcap` e `seguro.pcap` no Wireshark. As po
 O que este item já põe em prática:
 
 - **Segredos fora do código.** Nenhuma senha, chave ou certificado está no repositório: tudo é gerado no ambiente, com permissões restritas. O `.gitignore` cobre capturas e cópias locais da CA. Comparar com uma chave fixa no `application.properties`: ela iria para o Git, para cada clone e para o histórico, e não teria como ser trocada sem um novo commit.
-- **Segurança testada a cada build.** Os testes de unidade (`mvn test` em cada serviço) cobrem os casos de recusa: sem token, token expirado, de outra chave, de outro emissor, de outra audiência, senha errada, senha usada fora do login. O `verify.sh` confere o mesmo no ambiente real, por DNS e TLS.
+- **Segurança testada a cada build.** Os testes de unidade (`mvn test` em cada serviço) cobrem os casos de recusa: sem token, token expirado, de outra chave, de outro emissor, de outra audiência, senha errada, senha usada fora do login. O `verify.sh` confere o mesmo no ambiente real, por DNS e TLS. Os dois já rodam no [`Jenkinsfile`](../../Jenkinsfile) do item 2 (estágios 2 e 6): um teste de segurança que falha impede o deploy, e um deploy que não passa no `verify.sh` deixa o build vermelho.
 - **Menor privilégio.** Contêineres com usuário sem privilégio, volume de segredos somente leitura, portas publicadas só no loopback, rotas negadas por padrão, tokens com escopo, audiência e validade curtos.
 - **Fins de linha LF garantidos** pelo `.gitattributes`: um clone no Windows com `core.autocrlf=true` não quebra os scripts nem o `dnsmasq.conf` dentro dos contêineres.
 
-Proposta de estágios de segurança para o `Jenkinsfile` do item 2, antes do deploy:
+Próximos estágios de segurança propostos para o `Jenkinsfile`, antes do deploy (ainda não implementados):
 
 ```groovy
-stage('Testes (inclui segurança)') {
-    steps {
-        sh 'cd services/catalog-service && mvn -B test'
-        sh 'cd services/order-service && mvn -B test'
-    }
-}
 stage('Varredura de segredos') {
-    steps { sh 'docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:latest detect --source /repo --no-banner' }
+    // Procura chaves, senhas e tokens em todo o histórico do Git.
+    steps { sh 'gitleaks detect --source . --no-banner' }
 }
 stage('Dependências e imagens') {
     steps {
         // Falha o build com CVE alta ou crítica nas dependências Maven ou nas imagens.
-        sh 'docker run --rm -v "$PWD:/src" aquasec/trivy:latest fs --exit-code 1 --severity HIGH,CRITICAL /src'
-        sh 'docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --exit-code 1 --severity HIGH,CRITICAL agnello-catalog agnello-order'
+        sh 'trivy fs --exit-code 1 --severity HIGH,CRITICAL .'
+        sh 'trivy image --exit-code 1 --severity HIGH,CRITICAL agnello-catalog agnello-order'
     }
 }
-// ... deploy (docker compose up) ...
-stage('Verificação pós-deploy') {
-    steps { sh 'infra/verify.sh' }
-}
 ```
+
+`gitleaks` e `trivy` entrariam na imagem do Jenkins ([`../jenkins/Dockerfile`](../jenkins/Dockerfile)). Rodá-los com `docker run -v "$PWD:..."` não funciona aqui: o Docker é o do host, que não enxerga o workspace de dentro do contêiner do Jenkins.
 
 ## 6. Limitações e próximos passos
 
