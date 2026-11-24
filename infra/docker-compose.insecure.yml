@@ -1,0 +1,18 @@
+# INSECURE MODE, for the Wireshark comparison only (security/capture.sh switches to it and back).
+# Same services, same JWTs, but plain HTTP everywhere: whoever sees the packets reads the passwords,
+# the tokens and the data. Never use it for anything else.
+#
+#   docker compose -f infra/docker-compose.yml -f infra/docker-compose.insecure.yml up -d
+#   docker compose -f infra/docker-compose.yml up -d     # back to HTTPS
+
+services:
+  catalog:
+    environment:
+      SPRING_PROFILES_ACTIVE: insecure
+      HEALTH_URL: http://localhost:8081/health
+
+  order:
+    environment:
+      SPRING_PROFILES_ACTIVE: insecure
+      HEALTH_URL: http://localhost:8082/health
+      CATALOG_URL: http://catalog.agnello.internal:8081

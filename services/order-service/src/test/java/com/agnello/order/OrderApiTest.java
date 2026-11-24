@@ -1,5 +1,6 @@
 package com.agnello.order;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -15,6 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.net.ConnectException;
+import java.time.Duration;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,13 +31,18 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.client.ResponseActions;
 import org.springframework.test.web.client.ResponseCreator;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.client.RestClient;
 
 /** The Order Service's own Carrinhos: Carrinho 1 holds wine 1 x2 and wine 4 x1, Carrinho 2 holds wines 2 and 3. */
 @WebMvcTest
-@Import({CarrinhoRepository.class, CatalogClient.class, OrderApiTest.CatalogHttpFake.class})
-@TestPropertySource(properties = "catalog.url=" + OrderApiTest.CATALOG_URL)
+@Import({CarrinhoRepository.class, CatalogClient.class, TokenService.class, SecurityConfig.class, OrderApiTest.CatalogHttpFake.class})
+@TestPropertySource(properties = {
+        "catalog.url=" + OrderApiTest.CATALOG_URL,
+        "agnello.jwt.secret=classpath:jwt-test.secret",
+        "agnello.demo.password=classpath:demo-password-test"})
 class OrderApiTest {
 
     static final String CATALOG_URL = "http://catalog.test:8081";
@@ -64,13 +71,21 @@ class OrderApiTest {
     @Autowired
     MockRestServiceServer catalogService;
 
+    @Autowired
+    TokenService tokens;
+
     @BeforeEach
     void forgetEarlierCatalogExpectations() {
         catalogService.reset();
     }
 
+    /** A Carrinho read as a logged-in customer sends it: with the token from POST /v1/auth/token. */
+    private MockHttpServletRequestBuilder customerGet(String path) {
+        return get(path).header("Authorization", "Bearer " + tokens.customerToken("cliente"));
+    }
+
     @Test
-    void healthAnswersUp() throws Exception {
+    void healthAnswersUpWithoutAToken() throws Exception {
         mockMvc.perform(get("/health"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("UP"));
@@ -82,7 +97,7 @@ class OrderApiTest {
         catalogAnswersWithWine(4, "Chardonnay Premium", "79.90");
 
         // 2 x 89.90 + 1 x 79.90 = 259.70
-        mockMvc.perform(get("/v1/carrinhos/1"))
+        mockMvc.perform(customerGet("/v1/carrinhos/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idCarrinho").value(1))
                 .andExpect(jsonPath("$.itens", hasSize(2)))
@@ -97,7 +112,7 @@ class OrderApiTest {
 
     @Test
     void unknownCarrinhoAnswersNotFoundWithoutAskingTheCatalogService() throws Exception {
-        mockMvc.perform(get("/v1/carrinhos/999"))
+        mockMvc.perform(customerGet("/v1/carrinhos/999"))
                 .andExpect(status().isNotFound());
         catalogService.verify();
     }
@@ -115,13 +130,23 @@ class OrderApiTest {
     void aCatalogServiceFailureAnswersServiceUnavailable(ResponseCreator catalogAnswer) throws Exception {
         catalogRequestFor(1).andRespond(catalogAnswer);
 
-        mockMvc.perform(get("/v1/carrinhos/1"))
+        mockMvc.perform(customerGet("/v1/carrinhos/1"))
                 .andExpect(status().isServiceUnavailable());
     }
 
+    /** Every call carries a service token: issued for the Catalog Service, scope catalog:read, valid for a minute. */
     private ResponseActions catalogRequestFor(int idVinho) {
         return catalogService.expect(requestTo(CATALOG_URL + "/v1/vinhos/" + idVinho))
-                .andExpect(method(GET));
+                .andExpect(method(GET))
+                .andExpect(request -> {
+                    String header = request.getHeaders().getFirst("Authorization");
+                    assertThat(header).startsWith("Bearer ");
+                    Jwt token = JwtTestDecoder.decode(header.substring("Bearer ".length()));
+                    assertThat(token.getAudience()).containsExactly(TokenService.AUDIENCE_CATALOG);
+                    assertThat(token.getClaimAsString("scope")).isEqualTo("catalog:read");
+                    assertThat(token.getSubject()).isEqualTo("order-service");
+                    assertThat(Duration.between(token.getIssuedAt(), token.getExpiresAt())).isEqualTo(Duration.ofSeconds(60));
+                });
     }
 
     /** The Catalog Service answers the wine with the fields it really sends: more than the Order Service reads. */

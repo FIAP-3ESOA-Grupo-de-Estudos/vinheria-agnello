@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
-# Verifies the running Vinheria Agnello infrastructure environment.
+# Verifies the running Vinheria Agnello infrastructure environment: DNS, DHCP, TLS and JWT.
 # Prints one PASS or FAIL line per check, then a summary.
 # Exits non-zero when any check fails.
 
 set -u
+# Git Bash on Windows would rewrite container paths such as /run/agnello into Windows paths.
+export MSYS_NO_PATHCONV=1
 
 readonly CONTAINER_DNSMASQ=agnello-dnsmasq
 readonly CONTAINER_PROBE=agnello-probe
@@ -19,6 +21,15 @@ readonly POOL_LAST=199
 readonly LEASE_FILE=/var/lib/misc/dnsmasq.leases
 # Client containers reuse the dnsmasq image for its busybox nslookup and wget.
 readonly CLIENT_IMAGE=agnello-dnsmasq
+# HTTP(S) client containers use the netlab image (curl, tcpdump, tshark), built from the tools profile.
+readonly NETLAB_IMAGE=agnello-netlab
+COMPOSE_FILE="$(cd "$(dirname "$0")" && pwd)/docker-compose.yml"
+# With MSYS_NO_PATHCONV, host paths handed to docker are converted here instead (C:/... on Git Bash).
+command -v cygpath >/dev/null 2>&1 && COMPOSE_FILE=$(cygpath -m "$COMPOSE_FILE")
+readonly COMPOSE_FILE
+# Where the services see the agnello-pki volume (certificates and secrets), and the demo customer.
+readonly PKI_DIR=/run/agnello
+readonly DEMO_USER=cliente
 # name:address of every host with a fixed address.
 readonly FIXED_HOSTS="catalog:172.28.0.11 order:172.28.0.12"
 # The Order Service's address (it is the one that looks the Catalog Service up) and the two ports.
@@ -187,28 +198,164 @@ EOF
   fi
 }
 
-# Fetches a URL from a throwaway client container on the private network that
-# uses dnsmasq as its resolver. Prints the body; returns the client's exit status.
-http_get_from_network() {
-  docker run --rm --network "$NETWORK" --dns "$DNS_SERVER" --entrypoint wget "$CLIENT_IMAGE" \
-    -q -O- -T 10 "$1" 2>&1
+# Runs curl from a throwaway netlab container on the private network that uses dnsmasq as its
+# resolver and trusts only the environment's CA. The CA certificate is streamed in from the Order
+# Service's read-only copy of the agnello-pki volume, so no host path is mounted.
+# Prints the body, then the HTTP status on a last line of its own ("000" when no response came).
+curl_from_network() {
+  docker exec "$CONTAINER_ORDER" cat "$PKI_DIR/ca.crt" 2>/dev/null |
+    docker run -i --rm --network "$NETWORK" --dns "$DNS_SERVER" --entrypoint sh "$NETLAB_IMAGE" -c \
+      'cat > /tmp/ca.crt && curl -s --max-time 10 --cacert /tmp/ca.crt -w "\n%{http_code}" "$@"' curl "$@" 2>&1
 }
 
-# Beginning of a response body, for failure details (a wine list is long).
+# Last line of curl_from_network's output: the HTTP status.
+status_of() {
+  printf '%s\n' "$1" | tail -n 1
+}
+
+# Everything but the last line: the body.
+body_of() {
+  printf '%s\n' "$1" | sed '$d'
+}
+
+# Beginning of a response, for failure details (a wine list is long).
 response_excerpt() {
-  printf '%s\n' "$1" | last_line | cut -c1-200
+  printf '%s' "$1" | tr '\n' ' ' | cut -c1-200
 }
 
-check_catalog_list_by_dns_name() {
-  local url="http://catalog.$ZONE:$CATALOG_PORT/v1/vinhos"
-  local description="catalog: wine list is returned through catalog.$ZONE:$CATALOG_PORT from a client container on $NETWORK"
-  local body
-  require_healthy "$description" "$dnsmasq_state" dnsmasq || return
+# The demo customer's password, generated into the agnello-pki volume by the pki job.
+demo_password() {
+  docker exec "$CONTAINER_ORDER" cat "$PKI_DIR/demo-password" 2>/dev/null
+}
+
+check_netlab_image() {
+  local description="tools: the $NETLAB_IMAGE image (curl, tcpdump, tshark) is available"
+  if docker image inspect "$NETLAB_IMAGE" >/dev/null 2>&1 ||
+    docker compose -f "$COMPOSE_FILE" --profile tools build netlab >/dev/null 2>&1; then
+    pass "$description"
+    netlab_ready=1
+  else
+    fail "$description" "could not build it: docker compose -f infra/docker-compose.yml --profile tools build netlab"
+    netlab_ready=0
+  fi
+}
+
+require_netlab() {
+  [ "$netlab_ready" = 1 ] && return 0
+  fail "$1" "not run: the $NETLAB_IMAGE image is not available"
+  return 1
+}
+
+# Only HTTPS: a plain-HTTP request reaches no application code, Tomcat answers 400 before it.
+check_catalog_refuses_plain_http() {
+  local url="http://catalog.$ZONE:$CATALOG_PORT/health"
+  local description="tls: the Catalog Service refuses plain HTTP on catalog.$ZONE:$CATALOG_PORT"
+  local response
   require_healthy "$description" "$catalog_state" "Catalog Service" || return
-  if body=$(http_get_from_network "$url") && printf '%s\n' "$body" | grep -qF "\"nome\":\"$SEED_WINE\""; then
+  require_netlab "$description" || return
+  response=$(curl_from_network "$url")
+  if [ "$(status_of "$response")" = 400 ] && printf '%s\n' "$response" | grep -qF 'requires TLS'; then
     pass "$description"
   else
-    fail "$description" "GET $url did not return the seeded wine; response was: $(response_excerpt "$body")"
+    fail "$description" "GET $url answered $(status_of "$response"): $(response_excerpt "$(body_of "$response")")"
+  fi
+}
+
+# curl checks the certificate against the internal CA and the name catalog.agnello.internal.
+check_catalog_https_certificate() {
+  local url="https://catalog.$ZONE:$CATALOG_PORT/health"
+  local description="tls: catalog.$ZONE:$CATALOG_PORT answers HTTPS with a certificate the internal CA issued for that name"
+  local response
+  require_healthy "$description" "$dnsmasq_state" dnsmasq || return
+  require_healthy "$description" "$catalog_state" "Catalog Service" || return
+  require_netlab "$description" || return
+  response=$(curl_from_network "$url")
+  if [ "$(status_of "$response")" = 200 ]; then
+    pass "$description"
+  else
+    fail "$description" "GET $url failed: $(response_excerpt "$response")"
+  fi
+}
+
+check_catalog_requires_token() {
+  local url="https://catalog.$ZONE:$CATALOG_PORT/v1/vinhos"
+  local description="jwt: the Catalog Service answers 401 to a wine list read without a token"
+  local response
+  require_healthy "$description" "$catalog_state" "Catalog Service" || return
+  require_netlab "$description" || return
+  response=$(curl_from_network "$url")
+  if [ "$(status_of "$response")" = 401 ]; then
+    pass "$description"
+  else
+    fail "$description" "GET $url answered $(status_of "$response"): $(response_excerpt "$(body_of "$response")")"
+  fi
+}
+
+check_login_refuses_wrong_password() {
+  local url="https://order.$ZONE:$ORDER_PORT/v1/auth/token"
+  local description="auth: the Order Service answers 401 to a login with a wrong password"
+  local response
+  require_healthy "$description" "$order_state" "Order Service" || return
+  require_netlab "$description" || return
+  response=$(curl_from_network -X POST -u "$DEMO_USER:not-the-password" "$url")
+  if [ "$(status_of "$response")" = 401 ]; then
+    pass "$description"
+  else
+    fail "$description" "POST $url answered $(status_of "$response")"
+  fi
+}
+
+# Logs in as the demo customer; sets customer_token on success.
+check_login_issues_token() {
+  local url="https://order.$ZONE:$ORDER_PORT/v1/auth/token"
+  local description="auth: the Order Service trades the demo customer's password for a JWT (HTTP Basic, POST /v1/auth/token)"
+  local response password
+  customer_token=
+  require_healthy "$description" "$order_state" "Order Service" || return
+  require_netlab "$description" || return
+  if ! password=$(demo_password) || [ -z "$password" ]; then
+    fail "$description" "cannot read $PKI_DIR/demo-password in $CONTAINER_ORDER"
+    return
+  fi
+  response=$(curl_from_network -X POST -u "$DEMO_USER:$password" "$url")
+  customer_token=$(body_of "$response" | sed -n 's/.*"access_token":"\([^"]*\)".*/\1/p')
+  if [ "$(status_of "$response")" = 200 ] && [ -n "$customer_token" ]; then
+    pass "$description"
+  else
+    fail "$description" "POST $url answered $(status_of "$response"): $(response_excerpt "$(body_of "$response")")"
+  fi
+}
+
+check_order_requires_token() {
+  local url="https://order.$ZONE:$ORDER_PORT/v1/carrinhos/1"
+  local description="jwt: the Order Service answers 401 to a Carrinho read without a token"
+  local response
+  require_healthy "$description" "$order_state" "Order Service" || return
+  require_netlab "$description" || return
+  response=$(curl_from_network "$url")
+  if [ "$(status_of "$response")" = 401 ]; then
+    pass "$description"
+  else
+    fail "$description" "GET $url answered $(status_of "$response")"
+  fi
+}
+
+# The customer's token names the Order Service as its audience: the Catalog Service must refuse it.
+check_catalog_refuses_customer_token() {
+  local url="https://catalog.$ZONE:$CATALOG_PORT/v1/vinhos"
+  local description="jwt: the Catalog Service answers 401 to the customer's token (issued for the Order Service)"
+  local response
+  require_healthy "$description" "$catalog_state" "Catalog Service" || return
+  require_netlab "$description" || return
+  if [ -z "$customer_token" ]; then
+    fail "$description" "not run: no customer token (the login check failed)"
+    return
+  fi
+  response=$(curl_from_network -H "Authorization: Bearer $customer_token" "$url")
+  if [ "$(status_of "$response")" = 401 ]; then
+    pass "$description"
+  else
+    fail "$description" "GET $url answered $(status_of "$response")"
   fi
 }
 
@@ -220,18 +367,25 @@ is_seeded_cart() {
     printf '%s\n' "$1" | grep -qF "\"total\":$SEED_CART_TOTAL"
 }
 
-# The Order Service stores only wine ids and quantities: the names and the total can only
-# come from a call to the Catalog Service, by DNS name.
+# The Order Service stores only wine ids and quantities: the names and the total can only come
+# from a call to the Catalog Service, by DNS name, over HTTPS, with a service token the Catalog
+# Service accepted.
 check_order_cart_by_dns_name() {
-  local url="http://order.$ZONE:$ORDER_PORT/v1/carrinhos/1"
-  local description="order: Carrinho 1 is returned with the names and prices of the Catalog Service and total $SEED_CART_TOTAL through order.$ZONE:$ORDER_PORT"
-  local body
+  local url="https://order.$ZONE:$ORDER_PORT/v1/carrinhos/1"
+  local description="order: with the customer's token, Carrinho 1 comes back with the Catalog Service's names and prices and total $SEED_CART_TOTAL (Order to Catalog over HTTPS with a service JWT)"
+  local response
   require_healthy "$description" "$dnsmasq_state" dnsmasq || return
   require_healthy "$description" "$order_state" "Order Service" || return
-  if body=$(http_get_from_network "$url") && is_seeded_cart "$body"; then
+  require_netlab "$description" || return
+  if [ -z "$customer_token" ]; then
+    fail "$description" "not run: no customer token (the login check failed)"
+    return
+  fi
+  response=$(curl_from_network -H "Authorization: Bearer $customer_token" "$url")
+  if [ "$(status_of "$response")" = 200 ] && is_seeded_cart "$(body_of "$response")"; then
     pass "$description"
   else
-    fail "$description" "GET $url did not return the seeded Carrinho 1; response was: $(response_excerpt "$body")"
+    fail "$description" "GET $url answered $(status_of "$response"): $(response_excerpt "$(body_of "$response")")"
   fi
 }
 
@@ -258,7 +412,14 @@ for fixed_host in $FIXED_HOSTS; do
   check_resolves "${fixed_host%%:*}" "${fixed_host#*:}"
 done
 check_dhcp
-check_catalog_list_by_dns_name
+check_netlab_image
+check_catalog_refuses_plain_http
+check_catalog_https_certificate
+check_catalog_requires_token
+check_login_refuses_wrong_password
+check_login_issues_token
+check_order_requires_token
+check_catalog_refuses_customer_token
 check_order_cart_by_dns_name
 check_order_resolved_catalog_through_dnsmasq
 
