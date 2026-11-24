@@ -28,6 +28,7 @@ RUN jenkins-plugin-cli --plugins \
     git \
     configuration-as-code \
     job-dsl \
-    timestamper
+    timestamper \
+    pipeline-stage-view
 
 COPY casc.yaml /usr/share/jenkins/casc.yaml

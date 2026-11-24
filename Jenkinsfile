@@ -91,7 +91,7 @@ pipeline {
 
     post {
         success {
-            echo 'Deploy concluído! Web: http://127.0.0.1:8086 | Catalog: http://127.0.0.1:8081/health | Order: http://127.0.0.1:8082/health'
+            echo 'Deploy concluído! Web: http://127.0.0.1:8086 | Catalog: https://127.0.0.1:8081/health | Order: https://127.0.0.1:8082/health'
         }
         failure {
             echo "Falha no pipeline do ${APP_NAME}. Veja o estágio com erro no Console Output."
