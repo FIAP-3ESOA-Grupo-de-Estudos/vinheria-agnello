@@ -1,0 +1,93 @@
+name: vinheria-agnello
+
+services:
+  dnsmasq:
+    build: ./dnsmasq
+    image: agnello-dnsmasq
+    container_name: agnello-dnsmasq
+    cap_add:
+      - NET_ADMIN
+    networks:
+      agnello-net:
+        ipv4_address: 172.28.0.2
+    healthcheck:
+      test: ["CMD-SHELL", "nslookup catalog.agnello.internal 127.0.0.1 | grep -qFx 'Address: 172.28.0.11'"]
+      interval: 2s
+      timeout: 2s
+      retries: 3
+
+  catalog:
+    build: ../services/catalog-service
+    image: agnello-catalog
+    container_name: agnello-catalog
+    ports:
+      # Loopback only: there is no authentication yet, so other machines on the network must not reach it.
+      - "127.0.0.1:8081:8081"
+    networks:
+      agnello-net:
+        ipv4_address: 172.28.0.11
+        mac_address: 02:42:ac:1c:00:0b
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8081/health | grep -q UP"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 15s
+    depends_on:
+      dnsmasq:
+        condition: service_healthy
+
+  # Does not depend on the Catalog Service: it starts and stays healthy even when that one is down.
+  order:
+    build: ../services/order-service
+    image: agnello-order
+    container_name: agnello-order
+    # dnsmasq is the resolver, so catalog.agnello.internal is answered by it.
+    dns:
+      - 172.28.0.2
+    environment:
+      # Where the Catalog Service lives: its DNS name and port, resolved through dnsmasq. Plain HTTP on purpose.
+      CATALOG_URL: http://catalog.agnello.internal:8081
+    ports:
+      # Loopback only: there is no authentication yet, so other machines on the network must not reach it.
+      - "127.0.0.1:8082:8082"
+    networks:
+      agnello-net:
+        ipv4_address: 172.28.0.12
+        mac_address: 02:42:ac:1c:00:0c
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8082/health | grep -q UP"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 15s
+    depends_on:
+      dnsmasq:
+        condition: service_healthy
+
+  # One-shot job: does a real DHCP handshake, then exits 0.
+  probe:
+    build: ./probe
+    image: agnello-probe
+    container_name: agnello-probe
+    restart: "no"
+    cap_add:
+      - NET_ADMIN
+    networks:
+      - agnello-net
+    # The probe starts last, so plain `up -d` returns only when its dependencies are healthy.
+    depends_on:
+      dnsmasq:
+        condition: service_healthy
+      catalog:
+        condition: service_healthy
+      order:
+        condition: service_healthy
+
+networks:
+  agnello-net:
+    name: agnello-net
+    ipam:
+      config:
+        - subnet: 172.28.0.0/24
+          gateway: 172.28.0.1
