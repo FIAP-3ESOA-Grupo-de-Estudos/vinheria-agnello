@@ -10,7 +10,8 @@ RUN mvn -B -q -DskipTests package
 FROM eclipse-temurin:17-jre-noble
 WORKDIR /app
 COPY --from=build /build/target/order-service.jar app.jar
-RUN useradd --system --no-create-home order
+# Fixed ids: the agnello-pki volume gives group 10000 (agnello) read access to the keys and secrets.
+RUN groupadd --system --gid 10000 agnello && useradd --system --no-create-home --uid 10002 --gid 10000 order
 USER order
 EXPOSE 8082
 ENTRYPOINT ["java", "-jar", "app.jar"]

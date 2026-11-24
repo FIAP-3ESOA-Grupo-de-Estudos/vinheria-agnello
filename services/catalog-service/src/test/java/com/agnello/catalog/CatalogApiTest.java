@@ -10,18 +10,26 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 /** The Catalog Service's own wine list: wines 1 to 4 are active, wine 5 is inactive. */
 @WebMvcTest
-@Import(VinhoRepository.class)
+@Import({VinhoRepository.class, SecurityConfig.class})
+@TestPropertySource(properties = TestTokens.SECRET_PROPERTY)
 class CatalogApiTest {
 
     @Autowired
     MockMvc mockMvc;
 
+    /** A request as the Order Service sends it: with a valid service token. */
+    private static MockHttpServletRequestBuilder authorizedGet(String path) {
+        return get(path).header("Authorization", "Bearer " + TestTokens.serviceToken());
+    }
+
     @Test
-    void healthAnswersUp() throws Exception {
+    void healthAnswersUpWithoutAToken() throws Exception {
         mockMvc.perform(get("/health"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("UP"));
@@ -29,7 +37,7 @@ class CatalogApiTest {
 
     @Test
     void getsAnExistingWineById() throws Exception {
-        mockMvc.perform(get("/v1/vinhos/1"))
+        mockMvc.perform(authorizedGet("/v1/vinhos/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idVinho").value(1))
                 .andExpect(jsonPath("$.nome").value("Cabernet Sauvignon Reserva"))
@@ -39,19 +47,19 @@ class CatalogApiTest {
 
     @Test
     void unknownWineIdAnswersNotFound() throws Exception {
-        mockMvc.perform(get("/v1/vinhos/999"))
+        mockMvc.perform(authorizedGet("/v1/vinhos/999"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void inactiveWineAnswersNotFound() throws Exception {
-        mockMvc.perform(get("/v1/vinhos/5"))
+        mockMvc.perform(authorizedGet("/v1/vinhos/5"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void listReturnsOnlyActiveWines() throws Exception {
-        mockMvc.perform(get("/v1/vinhos"))
+        mockMvc.perform(authorizedGet("/v1/vinhos"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(4)))
                 .andExpect(jsonPath("$[*].idVinho", containsInAnyOrder(1, 2, 3, 4)));
