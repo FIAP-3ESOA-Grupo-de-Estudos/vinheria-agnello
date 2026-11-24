@@ -15,6 +15,10 @@ Connection conn = DatabaseConfig.getDataSource().getConnection();
 
 O Catalog Service e o Order Service, com DNS e DHCP num ambiente Docker, estão em [`infra/README.md`](infra/README.md) (item 1).
 
+## Comunicação segura e DevSecOps (item 3)
+
+JWT entre os serviços, HTTPS (TLS 1.3), segredos gerados fora do Git e a comparação no Wireshark entre o tráfego com e sem criptografia, com os prints: [`infra/security/README.md`](infra/security/README.md).
+
 ## CI/CD: pipeline Jenkins (item 2)
 
 O Jenkins roda num contêiner, já configurado por código (JCasC), e tem um job, `vinheria-agnello`, que lê o [`Jenkinsfile`](Jenkinsfile) do repositório.
