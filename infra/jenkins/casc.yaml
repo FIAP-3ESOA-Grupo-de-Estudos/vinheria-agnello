@@ -1,0 +1,21 @@
+jenkins:
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "admin"
+          password: "admin"
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+
+jobs:
+  - script: >
+      pipelineJob('vinheria-agnello') {
+        definition {
+          cps {
+            script("node { evaluate(readFile('/var/workspace/vinheria-agnello/Jenkinsfile')) }")
+            sandbox(true)
+          }
+        }
+      }
