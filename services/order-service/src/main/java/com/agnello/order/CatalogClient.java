@@ -11,14 +11,8 @@ class CatalogClient {
 
     private final RestClient http;
 
-    CatalogClient(
-            RestClient.Builder builder,
-            @Value("${catalog.url}") String catalogUrl,
-            @Value("${agnello.security.token}") String apiToken) {
-        this.http = builder
-                .baseUrl(catalogUrl)
-                .defaultHeader("Authorization", "Bearer " + apiToken)
-                .build();
+    CatalogClient(RestClient.Builder builder, @Value("${catalog.url}") String catalogUrl) {
+        this.http = builder.baseUrl(catalogUrl).build();
     }
 
     /**
