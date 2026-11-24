@@ -1,89 +1,87 @@
 # vinheria-agnelo
 
-# CI/CD — Pipeline Jenkins (Vinheria Agnello)
+## Instruções
 
-Este guia descreve como provisionar o servidor **Jenkins** via Docker Compose e executar a esteira de build e deploy automatizado da aplicação Java Web e dos microsserviços da **Vinheria Agnello**.
+- Para utilizar o `DatabaseConfig`:
 
-## Arquitetura da Esteira
+```java
+import java.sql.Connection;
+import br.com.vinheriaagnello.config.DatabaseConfig;
 
-O ambiente de CI/CD é isolado da infraestrutura da aplicação por meio de dois arquivos Compose distintos:
-- **`infra/docker-compose.jenkins.yml`**: Sobe exclusivamente o container do Jenkins (`agnello-jenkins`), já configurado com Maven, Docker CLI, Compose v2, Buildx e JCasC.
-- **`infra/docker-compose.yml`**: Gerenciado automaticamente pelo próprio pipeline durante o estágio de deploy para subir `dnsmasq`, `catalog`, `order` e `probe`.
+Connection conn = DatabaseConfig.getDataSource().getConnection();
+```
 
----
+## Infraestrutura e microsserviços
 
-## Pré-requisitos
+O Catalog Service e o Order Service, com DNS e DHCP num ambiente Docker, estão em [`infra/README.md`](infra/README.md) (item 1).
 
-- **Docker Desktop** (com suporte a WSL2 / Linux containers em execução).
-- Diretório local de destino para publicação de artefatos mapeado no Compose (padrão no Windows: `C:\deploy-vinheria`).
+## CI/CD: pipeline Jenkins (item 2)
 
----
+O Jenkins roda num contêiner, já configurado por código (JCasC), e tem um job, `vinheria-agnello`, que lê o [`Jenkinsfile`](Jenkinsfile) do repositório.
 
-## 1. Subindo o Servidor Jenkins
+### Arquitetura da esteira
 
-Na raiz do repositório (`vinheria-agnello`), execute:
+- [`infra/docker-compose.jenkins.yml`](infra/docker-compose.jenkins.yml) sobe só o Jenkins (`agnello-jenkins`): Maven, Docker CLI com Compose v2 e Buildx, e os plugins instalados na imagem ([`infra/jenkins/Dockerfile`](infra/jenkins/Dockerfile)).
+- [`infra/docker-compose.yml`](infra/docker-compose.yml) é a pilha da aplicação. O próprio pipeline a sobe no estágio 5.
+- **O código vem do Git.** O repositório é montado no Jenkins só para leitura, e o job o clona (`file:///var/workspace/vinheria-agnello`). O Jenkins compila **o que está commitado** na branch, nunca arquivos não commitados. Para publicar o que está no GitHub, faça `git pull` antes. O repositório no GitHub é privado; clonar do clone local evita guardar uma credencial do GitHub no Jenkins.
+- **Deploy automático.** O job consulta o repositório a cada 2 minutos (`pollSCM`): um commit novo na branch dispara build e deploy.
+- **Pasta de publicação.** O volume `vinheria-deploy` (`/var/www/vinheria-agnello` no Jenkins) recebe `infra/`, `services/` e `deploy_info.txt`. O volume `vinheria-webapps` recebe o `ROOT.war` e é o `webapps` do Tomcat, como a pasta de publicação de um IIS.
+
+### Pré-requisitos
+
+Docker Desktop (ou Docker Engine) com Compose v2. Nenhum caminho fixo do Windows: tudo fica em volumes do Docker.
+
+### 1. Subir o Jenkins
+
+Na raiz do repositório, defina a senha do usuário `admin` (ela não fica no repositório) e suba o contêiner:
 
 ```powershell
+$env:JENKINS_ADMIN_PASSWORD = "escolha-uma-senha"
 docker compose -f infra/docker-compose.jenkins.yml up -d --build
-
 ```
 
-> **Nota:** Na primeira execução, o Docker fará o build da imagem `agnello-jenkins` instalando o Maven, os binários do Docker e os plugins do Jenkins automaticamente (sem necessidade de configuração manual via assistente web).
+No bash: `JENKINS_ADMIN_PASSWORD=escolha-uma-senha docker compose -f infra/docker-compose.jenkins.yml up -d --build`.
 
----
+O job compila a branch `main`. Para outra branch, defina também `PIPELINE_BRANCH` (por exemplo `PIPELINE_BRANCH=minha-branch`).
 
-## 2. Acessando o Painel e Executando o Pipeline
+### 2. Rodar o pipeline
 
-1. Abra o navegador e acesse: **`http://127.0.0.1:8085`**
-2. Faça login com as credenciais padrão definidas no `infra/jenkins/casc.yaml`:
-* **Usuário:** `admin`
-* **Senha:** `admin`
+1. Abra **http://127.0.0.1:8085** e entre com `admin` e a senha que você definiu.
+2. Abra o job **`vinheria-agnello`** e clique em **Build Now** (ou faça um commit e espere até 2 minutos).
+3. Acompanhe os estágios no **Stage View** ou em **Console Output**.
 
+### 3. Estágios do `Jenkinsfile`
 
-3. Na tela inicial (*Dashboard*), clique no job **`vinheria-agnello`** (criado automaticamente).
-4. No menu lateral esquerdo, clique em **Build Now**.
-5. Acompanhe o progresso visual pelos 5 estágios no **Stage View** ou clique no número da execução (ex.: `#1`) > **Console Output** para ver os logs detalhados.
-
----
-
-## 3. Estágios do Pipeline (`Jenkinsfile`)
-
-| Estágio | Descrição |
+| Estágio | O que faz |
 | --- | --- |
-| **1. Preparar Workspace** | Copia os arquivos do repositório montado (`/var/workspace/vinheria-agnello`) para o workspace ativo do job. |
-| **2. Build Maven** | Executa `mvn clean package -DskipTests` para compilar o código-fonte e empacotar o `.war`. |
-| **3. Publicar Artefatos** | Transfere o `.war` (renomeado para `ROOT.war`), `.jar`, `infra/` e `services/` para `/var/www/vinheria-agnello` (`C:\deploy-vinheria`) e registra o timestamp em `deploy_info.txt`. |
-| **4. Deploy App (Tomcat)** | Recria o container `vinheria-web` (`tomcat:9.0-jdk17`) montando a pasta de deploy e publicando a aplicação web. |
-| **5. Deploy Infra (Docker Compose)** | Derruba instâncias antigas e sobe a stack de microsserviços (`dnsmasq`, `catalog`, `order` e `probe`) a partir da pasta publicada. |
+| Checkout SCM | Clona a branch do repositório Git (feito pelo Jenkins antes do primeiro estágio). |
+| 1. Build | `echo "Deploy da Vinheria"` e `mvn clean package`: empacota a aplicação web (`.war`). |
+| 2. Testes dos microsserviços | `mvn test` no Catalog Service e no Order Service. Um teste que falha para o pipeline antes do deploy. |
+| 3. Publicar artefatos | Copia o `.war` como `ROOT.war` para o `webapps` do Tomcat, e `infra/` e `services/` para a pasta de publicação, com o commit em `deploy_info.txt`. |
+| 4. Deploy da aplicação web (Tomcat) | Recria o contêiner `vinheria-web` (`tomcat:9.0-jdk17`) com o volume `vinheria-webapps`, em `127.0.0.1:8086`. |
+| 5. Deploy dos microsserviços | `docker compose up -d --build` a partir da pasta publicada: reconstrói só o que mudou. |
+| 6. Verificar o ambiente | Roda o [`infra/verify.sh`](infra/verify.sh) (DNS, DHCP e os microsserviços) e espera o Tomcat responder. |
 
----
+### 4. Validar
 
-## 4. Validando os Serviços Publicados
+Depois de um `Finished: SUCCESS`:
 
-Após o pipeline finalizar com **`Finished: SUCCESS`**, valide os endpoints no navegador ou via `curl`:
+- Aplicação web (Tomcat): `http://127.0.0.1:8086/`
+- Catalog Service e Order Service: veja [`infra/README.md`](infra/README.md); o estágio 6 já roda o `verify.sh`.
 
-* **Aplicação Web (Tomcat / JSP):** `http://127.0.0.1:8086/`
-* **Catalog Service (Healthcheck):** `http://127.0.0.1:8081/health` (esperado: `UP`)
-* **Order Service (Healthcheck):** `http://127.0.0.1:8082/health` (esperado: `UP`)
-
----
-
-## 5. Encerrando o Ambiente
-
-Para parar o servidor Jenkins sem remover o histórico de builds:
+### 5. Encerrar
 
 ```powershell
-docker compose -f infra/docker-compose.jenkins.yml down
-
+docker compose -f infra/docker-compose.jenkins.yml down       # para o Jenkins e mantém o histórico de builds
+docker rm -f vinheria-web                                      # para a aplicação web publicada
+docker compose -f infra/docker-compose.yml down                # para os microsserviços publicados
 ```
 
-Para parar também os containers publicados pelo pipeline:
+`down -v` no primeiro comando apaga também o histórico de builds e o cache do Maven.
 
-```powershell
-docker rm -f vinheria-web
-docker compose -f C:\deploy-vinheria\infra\docker-compose.yml down
+### Segurança do Jenkins
 
-```
+O contêiner roda como `root` e monta o `docker.sock` do host para poder subir contêineres. Na prática, quem controla esse Jenkins controla o Docker do host. Por isso a porta fica só no loopback (`127.0.0.1:8085`), a senha vem de variável de ambiente e o login é obrigatório. Num servidor de verdade, os builds rodariam em agentes separados, sem o socket do host.
 
 ## IoT
 
