@@ -73,6 +73,32 @@ Depois de um `Finished: SUCCESS`:
 - Aplicação web (Tomcat): `http://127.0.0.1:8086/`
 - Catalog Service e Order Service: veja [`infra/README.md`](infra/README.md); o estágio 6 já roda o `verify.sh`.
 
+### Evidências
+
+Build #5, do commit `64432e4` do `main`, no Jenkins local.
+
+**Stage View.** Os seis estágios verdes no build #5. O build #2 aparece vermelho porque foi interrompido: o contêiner do Jenkins foi recriado, para trocar de branch, enquanto o estágio 6 rodava (`script returned exit code -1`). Não foi falha do código.
+
+![Jenkins Stage View do job vinheria-agnello](infra/jenkins/prints/01-stage-view.png)
+
+**Build simples.** O estágio 1 com o `echo` "Deploy da Vinheria" e o commit que está sendo compilado, seguido do `mvn -B clean package`.
+
+![Console Output do build: echo Deploy da Vinheria e Maven](infra/jenkins/prints/02-console-build.png)
+
+**Verificação depois do deploy.** O estágio 6: `verify.sh` com 16 PASS (DNS, DHCP, TLS e JWT) e o Tomcat respondendo.
+
+![Console Output da verificação: verify.sh 16 PASS e Tomcat no ar](infra/jenkins/prints/03-console-verificacao.png)
+
+**Pasta de publicação.** O conteúdo dos volumes `vinheria-deploy` (`infra/`, `services/` e `deploy_info.txt` com o commit) e `vinheria-webapps` (`ROOT.war`, que o Tomcat já descompactou em `ROOT/`), o contêiner `vinheria-web` e o Tomcat respondendo HTTP 200.
+
+![Conteúdo da pasta de publicação e o Tomcat no ar](infra/jenkins/prints/04-pasta-de-publicacao.png)
+
+Para ver a pasta de publicação:
+
+```powershell
+docker run --rm -v vinheria-deploy:/var/www/vinheria-agnello -v vinheria-webapps:/var/www/webapps alpine sh -c "ls -l /var/www/vinheria-agnello /var/www/webapps; echo; cat /var/www/vinheria-agnello/deploy_info.txt"
+```
+
 ### 5. Encerrar
 
 ```powershell
