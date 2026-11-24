@@ -1,21 +1,34 @@
 jenkins:
+  systemMessage: "Vinheria Agnello CI/CD"
+  numExecutors: 2
   securityRealm:
     local:
       allowsSignup: false
       users:
         - id: "admin"
-          password: "admin"
+          # From the environment (infra/docker-compose.jenkins.yml): never committed.
+          password: "${JENKINS_ADMIN_PASSWORD}"
   authorizationStrategy:
     loggedInUsersCanDoAnything:
       allowAnonymousRead: false
 
 jobs:
+  # The pipeline is the repository's Jenkinsfile, read from a Git checkout: Jenkins builds what is
+  # committed on the branch, never uncommitted files. The repository is the one mounted read-only at
+  # /var/workspace/vinheria-agnello (the GitHub repository is private, so no credential is needed).
   - script: >
       pipelineJob('vinheria-agnello') {
+        description('Build, testes e deploy da Vinheria Agnello a partir do Git')
         definition {
-          cps {
-            script("node { evaluate(readFile('/var/workspace/vinheria-agnello/Jenkinsfile')) }")
-            sandbox(true)
+          cpsScm {
+            scm {
+              git {
+                remote { url('file:///var/workspace/vinheria-agnello') }
+                branch('*/${PIPELINE_BRANCH}')
+              }
+            }
+            scriptPath('Jenkinsfile')
+            lightweight(false)
           }
         }
       }
