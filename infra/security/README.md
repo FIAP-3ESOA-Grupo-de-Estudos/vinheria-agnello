@@ -148,17 +148,39 @@ Saída do script (a senha, os tokens e os horários mudam a cada ambiente):
 - **Com TLS, o mesmo tráfego vira ruído.** Só aparecem o handshake e os registros "Application Data", cifrados. Os bytes da captura não contêm nem `Bearer`, nem `eyJ`, nem o nome de um vinho. O que continua visível são os **metadados**: IPs, portas, tamanhos, horários e o nome pedido no SNI (`catalog.agnello.internal`).
 - **As camadas se somam.** TLS protege o caminho e prova a identidade do servidor (certificado). JWT prova a identidade de quem chama e limita o que pode fazer (`aud`, `scope`) e por quanto tempo (`exp`): um token vazado de outro jeito vale no máximo 60 segundos e para um serviço só.
 
-### Prints para o trabalho no Wireshark
+### As capturas no Wireshark
 
-Abra `infra/security/captures/inseguro.pcap` e `seguro.pcap` no Wireshark. As portas 8081 e 8082 não são as portas padrão de HTTP e HTTPS, então diga ao Wireshark como decodificá-las: **Analyze > Decode As…**, adicione `TCP port 8081` e `TCP port 8082`, com **HTTP** para `inseguro.pcap` e **TLS** para `seguro.pcap`.
+Prints do Wireshark 4.6.10 abrindo as duas capturas geradas pelo `capture.sh`. A senha e os tokens que aparecem são do ambiente de demonstração: valem só nele e mudam a cada `down -v`.
 
-| Print | Arquivo | Filtro | O que mostrar |
-|---|---|---|---|
-| Senha em claro | `inseguro.pcap` | `http.authbasic` | Abra o pacote `POST /v1/auth/token` e expanda *Authorization*: o Wireshark mostra a credencial decodificada |
-| Token em claro | `inseguro.pcap` | `http.authorization contains "Bearer"` | O JWT inteiro no cabeçalho, para qualquer um copiar |
-| Dados em claro | `inseguro.pcap` | `http.response` | Botão direito > *Follow > HTTP Stream* numa resposta do Catalog Service: o JSON com preço |
-| Handshake | `seguro.pcap` | `tls.handshake` | *Client Hello* com o SNI `catalog.agnello.internal`; *Server Hello* com TLS 1.3 |
-| Conteúdo cifrado | `seguro.pcap` | `tls` | *Follow > TCP Stream*: só bytes sem sentido; nenhum `Bearer` |
+**Sem segurança (`inseguro.pcap`)**
+
+**1. A senha do cliente em claro.** Filtro `http.authbasic`. A coluna *Credenciais (Basic)* é o campo que o próprio Wireshark decodifica do cabeçalho `Authorization: Basic …`, e o painel de bytes mostra o cabeçalho original. Base64 não é criptografia.
+
+![Wireshark: login POST /v1/auth/token com a senha do cliente decodificada](prints/01-inseguro-senha.png)
+
+**2. Os JWTs em claro.** Filtro `http.authorization contains "Bearer"`. O token do cliente (para o Order Service) e os dois tokens de serviço (do Order Service para o Catalog Service) aparecem inteiros, prontos para copiar. É o token do pacote 21 que o `capture.sh` reutiliza no ataque de replay.
+
+![Wireshark: cabeçalhos Authorization: Bearer com os JWTs](prints/02-inseguro-tokens.png)
+
+**3. Os dados de negócio em claro.** Filtro `http.response and tcp.srcport == 8081`. As respostas do Catalog Service trazem o id, a safra, o preço e o nome de cada vinho do Carrinho.
+
+![Wireshark: respostas JSON do Catalog Service com nome e preço dos vinhos](prints/03-inseguro-dados.png)
+
+**Com segurança (`seguro.pcap`)**
+
+**4. O handshake TLS 1.3.** Filtro `tls.handshake.type == 1 or tls.handshake.type == 2`. Os *Client Hello* pedem `order.agnello.internal` e `catalog.agnello.internal` (SNI), e os *Server Hello* fecham em TLS 1.3. É o que continua visível: quem fala com quem, e o nome do servidor.
+
+![Wireshark: Client Hello e Server Hello com SNI e TLS 1.3](prints/04-seguro-handshake.png)
+
+**5. O conteúdo cifrado.** Filtro `tls.app_data`. O mesmo fluxo (login, Carrinho, chamadas ao Catalog Service) vira 25 registros *Application Data*. O pacote 56 é a resposta do Catalog Service, a mesma do print 3, agora sem nada legível.
+
+![Wireshark: registros Application Data cifrados](prints/05-seguro-cifrado.png)
+
+**6. Nenhuma requisição HTTP legível.** Filtro `http` na captura segura: `Exibidos: 0` de 74 pacotes.
+
+![Wireshark: filtro http sem nenhum pacote na captura segura](prints/06-seguro-sem-http.png)
+
+**Para refazer os prints.** Abra `infra/security/captures/inseguro.pcap` e `seguro.pcap` no Wireshark. As portas 8081 e 8082 não são as portas padrão de HTTP e HTTPS, então diga ao Wireshark como decodificá-las: **Analisar > Decodificar como…** (*Analyze > Decode As…*), com `TCP port 8081` e `TCP port 8082` como **HTTP** em `inseguro.pcap` e como **TLS** em `seguro.pcap`. As colunas extras dos prints são colunas personalizadas (botão direito no cabeçalho > *Preferências de coluna*) com os campos `http.authbasic`, `http.authorization`, `json.value.number`, `json.value.string`, `tls.handshake.extensions_server_name` e `tls.handshake.extensions.supported_version`.
 
 ## 5. DevSecOps
 
